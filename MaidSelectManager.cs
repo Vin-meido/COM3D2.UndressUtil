@@ -135,9 +135,9 @@ namespace COM3D2.UndressUtil.Plugin
             {
                 component.SetSelected(component.maid == maid);
             }
-            UndressUtilPlugin.Instance.LogInfo("Maid selected event!!!!!!!!!!!!!!");
+
+            Log.LogVerbose("Maid selected event [{0}]", maid);
             MaidSelected.Invoke(maid);
-            UndressUtilPlugin.Instance.LogInfo("Maid selected event complete ######");
         }
     }
 }

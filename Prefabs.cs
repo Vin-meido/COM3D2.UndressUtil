@@ -15,8 +15,9 @@ namespace COM3D2.UndressUtil.Plugin
 
             var instance = UnityEngine.Object.Instantiate<GameObject>(prefab, parent.transform, false);
 
-            // Remove default handler
+            // Remove default handlers
             GameObject.Destroy(instance.GetComponent<UndressDance_Mgr>());
+            GameObject.Destroy(instance.GetComponentInChildren<UIWFTabPanel>());
 
             // Setup maid status tracking
             instance.AddComponent<MaidTracker>();

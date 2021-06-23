@@ -16,7 +16,6 @@ namespace COM3D2.UndressUtil.Plugin
         public MaidEvent MaidDeactivated { get; private set; } = new MaidEvent();
 
         private Dictionary<Maid, bool> maidOldStatus = new Dictionary<Maid, bool>();
-        private bool log = true;
         private int pollRate = 1;
 
         public void Start()
@@ -88,19 +87,14 @@ namespace COM3D2.UndressUtil.Plugin
 
         private void ActivateMaid(Maid maid)
         {
-            LogDebug("Activate maid: {0}", maid);
+            Log.LogVerbose("Activate maid: {0}", maid);
             MaidActivated.Invoke(maid);
         }
 
         private void DeactivateMaid(Maid maid)
         {
-            LogDebug("Deactivate maid: {0}", maid);
+            Log.LogVerbose("Deactivate maid: {0}", maid);
             MaidDeactivated.Invoke(maid);
-        }
-
-        private void LogDebug(string msg, params object[] args)
-        {
-            UnityEngine.Debug.Log(String.Format(msg, args));
         }
     }
 }

@@ -9,17 +9,47 @@ namespace COM3D2.UndressUtil.Plugin
 {
     class UndressWindowManager: MonoBehaviour
     {
+        GameObject itemWindow;
         GameObject itemGrid;
         GameObject maidGrid;
+        UIEventTrigger eventTrigger;
+
         private Dictionary<UIWFTabButton, Maid> uiTabMaidLookup = new Dictionary<UIWFTabButton, Maid>();
         private Dictionary<Maid, GameObject> maidGameObjectLookup = new Dictionary<Maid, GameObject>();
         public MaidSelectManager maidSelectManager { get; private set; }
         private MaidTracker maidTracker;
 
+        public void Awake()
+        {
+            Log.LogVerbose("UndressWindowManager.Awake");
+
+            this.itemWindow = this.gameObject.transform.Find("ItemWindow").gameObject;
+            Assert.IsNotNull(this.itemWindow, "Could not find item window");
+
+            this.itemGrid = this.gameObject.transform.Find("ItemWindow/ItemGrid").gameObject;
+            Assert.IsNotNull(this.itemGrid, "Could not find item grid");
+
+            this.maidGrid = this.gameObject.transform.Find("ItemWindow/MaidIcon").gameObject;
+            Assert.IsNotNull(this.maidGrid, "Could not find MaidIcon");
+
+            this.maidTracker = gameObject.GetComponentInParent<MaidTracker>();
+            Assert.IsNotNull(this.maidTracker, "Could not find MaidTracker component");
+
+            this.eventTrigger = this.gameObject
+                .transform
+                .Find("TakeEvent")
+                .gameObject
+                .GetComponent<UIEventTrigger>();
+            Assert.IsNotNull(this.eventTrigger, "Could not find event trigger");
+
+            this.gameObject.AddComponent<TweenAlpha>();
+        }
+
         public void Start()
         {
-            maidTracker = gameObject.GetComponentInParent<MaidTracker>();
+            Log.LogVerbose("UndressWindowManager.Start");
 
+            SetupHover();
             SetupComponents();
             SetupMaidIconList();
             SetupItemGrid();
@@ -37,6 +67,12 @@ namespace COM3D2.UndressUtil.Plugin
             Destroy(this.gameObject);
         }
 
+        private void SetupHover()
+        {
+            EventDelegate.Add(eventTrigger.onHoverOver, this.OnHover);
+            EventDelegate.Add(eventTrigger.onHoverOut, this.OnHoverOut);
+        }
+
         private void SetupComponents()
         {
             // make window draggable
@@ -45,14 +81,13 @@ namespace COM3D2.UndressUtil.Plugin
             dragger.WindowTransform = this.gameObject.transform;
 
             // setup button callbacks
-            SetCallback(bg, "TitleBar/End", new EventDelegate.Callback(this.HideWindow));
-            SetCallback(bg, "AllUndress", new EventDelegate.Callback(this.AllUndress));
-            SetCallback(bg, "AllDress", new EventDelegate.Callback(this.AllDress));
+            SetClickCallback(bg, "TitleBar/End", new EventDelegate.Callback(this.HideWindow));
+            SetClickCallback(bg, "AllUndress", new EventDelegate.Callback(this.AllUndress));
+            SetClickCallback(bg, "AllDress", new EventDelegate.Callback(this.AllDress));
         }
 
         private void SetupItemGrid()
         {
-            this.itemGrid = this.gameObject.transform.Find("ItemWindow/ItemGrid").gameObject;
             var partsDB = new PartsDB();
 
             foreach (var data in partsDB.GetPartsData())
@@ -67,7 +102,7 @@ namespace COM3D2.UndressUtil.Plugin
             this.itemGrid.GetComponent<UIGrid>().Reposition();
         }
 
-        private void SetCallback(GameObject bg, string child, EventDelegate.Callback callback)
+        private void SetClickCallback(GameObject bg, string child, EventDelegate.Callback callback)
         {
             var btn = bg.transform.Find(child).gameObject;
             var uibtn = btn.GetComponent<UIButton>();
@@ -77,14 +112,12 @@ namespace COM3D2.UndressUtil.Plugin
 
         private void SetupMaidIconList()
         {
-            this.maidGrid = this.gameObject.transform.Find("ItemWindow/MaidIcon").gameObject;
-            Destroy(this.maidGrid.GetComponent<UIWFTabPanel>());
             maidSelectManager = this.maidGrid.AddComponent<MaidSelectManager>();
         }
 
         public void HideWindow()
         {
-            this.gameObject.SetActive(false);
+            TweenAlpha.Begin(this.gameObject, 0.5f, 0);
         }
 
         public void AllUndress()
@@ -101,6 +134,16 @@ namespace COM3D2.UndressUtil.Plugin
             {
                 undressItem.SetMaidMask(maidSelectManager.SelectedMaid, false);
             }
+        }
+
+        private void OnHover()
+        {
+            Log.LogVerbose("UWM.OnHover");
+        }
+
+        private void OnHoverOut()
+        {
+            Log.LogVerbose("UWM.OnHoverOut");
         }
     }
 }

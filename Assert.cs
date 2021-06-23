@@ -32,7 +32,7 @@ namespace COM3D2.UndressUtil.Plugin
                 message = String.Format(message, args);
             }
 
-            UndressUtilPlugin.Instance.LogError(message);
+            Log.LogError(message);
             if (raiseExceptions)
             {
                 throw new Exception(message);

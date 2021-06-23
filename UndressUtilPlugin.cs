@@ -7,6 +7,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.VR;
 using BepInEx;
+using BepInEx.Logging;
 using BepInEx.Configuration;
 
 namespace COM3D2.UndressUtil.Plugin
@@ -108,6 +109,12 @@ namespace COM3D2.UndressUtil.Plugin
 
         public new UndressUtilConfig Config { get; private set; }
 
+        internal new ManualLogSource Logger { get
+            {
+                return base.Logger;
+            }
+        }
+
         public void Awake()
         {
             if (UndressUtilPlugin.Instance != null)
@@ -133,18 +140,6 @@ namespace COM3D2.UndressUtil.Plugin
             GameObject uiroot = GameObject.Find("SystemUI Root");
             Assert.IsNotNull(uiroot, "Could not find SystemUI Root");
             Prefabs.CreateUndressWindow(uiroot);
-        }
-
-        internal void LogInfo(string message, params object[] args)
-        {
-            //if (!enableDebug) return;
-            Logger.LogInfo(string.Format(message, args));
-        }
-
-        internal void LogError(string message, params object[] args)
-        {
-            //if (!enableDebug) return;
-            Logger.LogError(string.Format(message, args));
         }
     }
 }

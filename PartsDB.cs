@@ -62,7 +62,7 @@ namespace COM3D2.UndressUtil.Plugin
 						}
 						if (!GameUty.FileSystem.IsExistentFile(text))
 						{
-							Debug.LogError("アイコンファイル[" + text + "]が見つかりませんでした");
+							Log.LogError("Texture [{0}] does not exist", text)
 						}
 						Texture2D defaultIcon = ImportCM.CreateTexture(text);
 						mpnPartsData[lastMPN].DefaultIcon = defaultIcon;

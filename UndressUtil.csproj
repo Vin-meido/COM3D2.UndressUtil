@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assert.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="UndressUtilConfig.cs" />
     <Compile Include="GameObjectSearcher.cs" />
     <Compile Include="MaidSelectManager.cs" />
