@@ -19,7 +19,7 @@ namespace COM3D2.UndressUtil.Plugin
 		private Color m_DefaultColor = Color.white;
 		private Color m_UndressColor = Color.gray;
 
-		private MaidSelectManager maidSelectManager;
+		private MaidSelectPanelManager maidSelectManager;
 		private MaidTracker maidTracker;
 
 		public void Awake()
@@ -31,8 +31,8 @@ namespace COM3D2.UndressUtil.Plugin
 		public void Start()
         {
 			var mgr = this.gameObject.GetComponentInParent<UndressWindowManager>();
-			Assert.IsNotNull(mgr.maidSelectManager, "Could not find MaidSelectManager");
-			maidSelectManager = mgr.maidSelectManager;
+			Assert.IsNotNull(mgr.MaidSelectPanelManager, "Could not find MaidSelectManager");
+			maidSelectManager = mgr.MaidSelectPanelManager;
 			maidSelectManager.MaidSelected.AddListener(this.UpdateState);
 
 			EventDelegate.Add(this.button.onClick, new EventDelegate.Callback(this.SwitchMask));

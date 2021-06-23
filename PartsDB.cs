@@ -62,15 +62,12 @@ namespace COM3D2.UndressUtil.Plugin
 						}
 						if (!GameUty.FileSystem.IsExistentFile(text))
 						{
-							Log.LogError("Texture [{0}] does not exist", text)
+							Log.LogError("Texture [{0}] does not exist", text);
 						}
 						Texture2D defaultIcon = ImportCM.CreateTexture(text);
 						mpnPartsData[lastMPN].DefaultIcon = defaultIcon;
 						break;
 					}
-				case 3:
-					// this.mpnPartsData.Last<KeyValuePair<MPN, UndressDance_Mgr.PartsData>>().Value.SexsualPoint = csv.GetCellAsInteger(cx, cy);
-					break;
 				case 4:
 					{
 						bool flag = csv.GetCellAsString(cx, cy) == "○";
@@ -93,10 +90,6 @@ namespace COM3D2.UndressUtil.Plugin
 						}
 					}
 					break;
-			}
-			if (cx == csv.max_cell_x - 1)
-			{
-				// this.CreatePartsIcon(this.mpnPartsData.Last<KeyValuePair<MPN, UndressDance_Mgr.PartsData>>().Key);
 			}
 		}
 	}

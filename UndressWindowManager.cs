@@ -16,7 +16,7 @@ namespace COM3D2.UndressUtil.Plugin
 
         private Dictionary<UIWFTabButton, Maid> uiTabMaidLookup = new Dictionary<UIWFTabButton, Maid>();
         private Dictionary<Maid, GameObject> maidGameObjectLookup = new Dictionary<Maid, GameObject>();
-        public MaidSelectManager maidSelectManager { get; private set; }
+        public MaidSelectPanelManager MaidSelectPanelManager { get; private set; }
         private MaidTracker maidTracker;
 
         public void Awake()
@@ -112,7 +112,7 @@ namespace COM3D2.UndressUtil.Plugin
 
         private void SetupMaidIconList()
         {
-            maidSelectManager = this.maidGrid.AddComponent<MaidSelectManager>();
+            MaidSelectPanelManager = this.maidGrid.AddComponent<MaidSelectPanelManager>();
         }
 
         public void HideWindow()
@@ -124,7 +124,7 @@ namespace COM3D2.UndressUtil.Plugin
         {
             foreach (UndressItem undressItem in this.gameObject.GetComponentsInChildren<UndressItem>())
             {
-                undressItem.SetMaidMask(maidSelectManager.SelectedMaid, true);
+                undressItem.SetMaidMask(MaidSelectPanelManager.SelectedMaid, true);
             }
         }
 
@@ -132,7 +132,7 @@ namespace COM3D2.UndressUtil.Plugin
         {
             foreach (UndressItem undressItem in this.gameObject.GetComponentsInChildren<UndressItem>())
             {
-                undressItem.SetMaidMask(maidSelectManager.SelectedMaid, false);
+                undressItem.SetMaidMask(MaidSelectPanelManager.SelectedMaid, false);
             }
         }
 

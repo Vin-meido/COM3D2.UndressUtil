@@ -131,7 +131,11 @@ namespace COM3D2.UndressUtil.Plugin
         {
             if (EnableScenes.Contains(level))
             {
+                Log.LogInfo("Setting up UndressWindow");
                 SetupWindow();
+            } else
+            {
+                Log.LogInfo("Current level [{0}] does not support UndressWindow", level);
             }
         }
 

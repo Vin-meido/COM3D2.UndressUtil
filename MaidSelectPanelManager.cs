@@ -7,7 +7,7 @@ using UnityEngine.Events;
 
 namespace COM3D2.UndressUtil.Plugin
 {
-    class MaidSelectManager: MonoBehaviour
+    class MaidSelectPanelManager: MonoBehaviour
     {
         GameObject maidGrid;
         Dictionary<Maid, GameObject> maidGameObjectLookup = new Dictionary<Maid, GameObject>();
@@ -16,41 +16,7 @@ namespace COM3D2.UndressUtil.Plugin
         public Maid SelectedMaid { get; private set; }
 
         public class MaidSelectEvent : UnityEvent<Maid> { };
-        public class MaidIconClickEvent : UnityEvent<Maid> { };
 
-        public class MaidIcon: UIButton
-        {
-            public Maid maid { get; private set; }
-            public MaidIconClickEvent Click { get; private set; } = new MaidIconClickEvent();
-
-            public void Setup(Maid maid)
-            {
-                this.maid = maid;
-                EventDelegate.Add(this.onClick, this.OnMaidIconClick);
-            }
-
-            public void OnMaidIconClick()
-            {
-                Click.Invoke(this.maid);
-            }
-
-            public void SetSelected(bool selected)
-            {
-                if (selected)
-                {
-                    SetState(UIButtonColor.State.Disabled, false);
-                    var frame = gameObject.transform.parent.Find("Frame");
-                    var sprite = frame.GetComponent<UISprite>();
-                    sprite.color = Color.yellow;
-                } else
-                {
-                    SetState(UIButtonColor.State.Normal, false);
-                    var frame = gameObject.transform.parent.Find("Frame");
-                    var sprite = frame.GetComponent<UISprite>();
-                    sprite.color = Color.clear;
-                }
-            }
-        }
 
         public void Start()
         {
@@ -76,20 +42,19 @@ namespace COM3D2.UndressUtil.Plugin
             if (maidGameObjectLookup.ContainsKey(maid))
             {
                 maidGameObjectLookup[maid].SetActive(true);
+                return;
             }
-            else
-            {
-                var gameObject = Prefabs.CreateMaidIcon(this.maidGrid);
 
-                gameObject.GetComponentInChildren<UITexture>().mainTexture = maid.GetThumIcon();
-                var maidIconComponent = gameObject.GetComponentInChildren<MaidIcon>();
-                maidIconComponent.Setup(maid);
-                maidIconComponent.Click.AddListener(this.OnMaidIconClick);
+            var gameObject = Prefabs.CreateMaidIcon(this.maidGrid);
+            var maidIconComponent = gameObject.GetComponentInChildren<MaidIcon>();
+            Assert.IsNotNull(maidIconComponent, "Could not get maidIconComponent for [{0}]", gameObject);
+            maidIconComponent.Setup(maid);
+            maidIconComponent.Click.AddListener(this.OnMaidIconClick);
 
-                maidGameObjectLookup[maid] = gameObject;
-            }
+            maidGameObjectLookup[maid] = gameObject;
 
             maidGrid.GetComponent<UIGrid>().Reposition();
+
             if (this.SelectedMaid == null)
             {
                 OnMaidIconClick(maid);

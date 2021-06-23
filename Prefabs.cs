@@ -33,11 +33,13 @@ namespace COM3D2.UndressUtil.Plugin
         public static GameObject CreateMaidIcon(GameObject parent)
         {
             var instance = wf.Utility.CreatePrefab(parent, "SceneDance/Rhythm_Action/Prefab/UndressDance/MaidIcon", true);
+
+            // setup new handler
+            instance.AddComponent<MaidIcon>();
             
             var icon = instance.transform.Find("IconMask/Icon").gameObject;
             Assert.IsNotNull(icon, "Could not find IconMask/Icon");
             GameObject.Destroy(icon.GetComponent<UIWFTabButton>());
-            icon.AddComponent<MaidSelectManager.MaidIcon>();
 
             return instance;
         }
