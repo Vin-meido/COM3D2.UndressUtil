@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace COM3D2.UndressUtil.Plugin
         GameObject itemGrid;
         GameObject maidGrid;
         UIEventTrigger eventTrigger;
+        bool visible = true;
 
         private Dictionary<UIWFTabButton, Maid> uiTabMaidLookup = new Dictionary<UIWFTabButton, Maid>();
         private Dictionary<Maid, GameObject> maidGameObjectLookup = new Dictionary<Maid, GameObject>();
@@ -47,30 +49,38 @@ namespace COM3D2.UndressUtil.Plugin
 
         public void Start()
         {
-            Log.LogVerbose("UndressWindowManager.Start");
+            Log.LogVerbose("UndressWindowManager.Start [{0}]", this.GetInstanceID());
 
-            SetupHover();
             SetupComponents();
             SetupMaidIconList();
             SetupItemGrid();
 
+            if ((!GameMain.Instance.VRMode)
+                && (!UndressUtilPlugin.Instance.Config.autoShowInNonVr.Value))
+            {
+                Log.LogVerbose("Auto show disabled, hiding window");
+                this.visible = false;
+                this.gameObject.AddComponent<TweenAlpha>().to = 0;
+            }
+
             SceneManager.sceneUnloaded += this.OnSceneUnloaded;
         }
 
+        public void OnEnable()
+        {
+            StartCoroutine(this.KeyboardCheckCoroutine());
+        }
+
+
         public void OnDestroy()
         {
+            Log.LogVerbose("UndressWindowManager.OnDestroy [{0}]", this.GetInstanceID());
             SceneManager.sceneUnloaded -= this.OnSceneUnloaded;
         }
 
         public void OnSceneUnloaded(Scene sceen)
         {
             Destroy(this.gameObject);
-        }
-
-        private void SetupHover()
-        {
-            EventDelegate.Add(eventTrigger.onHoverOver, this.OnHover);
-            EventDelegate.Add(eventTrigger.onHoverOut, this.OnHoverOut);
         }
 
         private void SetupComponents()
@@ -117,7 +127,20 @@ namespace COM3D2.UndressUtil.Plugin
 
         public void HideWindow()
         {
-            TweenAlpha.Begin(this.gameObject, 0.5f, 0);
+            if (this.visible)
+            {
+                TweenAlpha.Begin(this.gameObject, 0.5f, 0);
+                this.visible = false;
+            }
+        }
+
+        public void ShowWindow()
+        {
+            if (!this.visible)
+            {
+                TweenAlpha.Begin(this.gameObject, 0.5f, 1);
+                this.visible = true;
+            }
         }
 
         public void AllUndress()
@@ -136,14 +159,27 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
-        private void OnHover()
+        private IEnumerator KeyboardCheckCoroutine()
         {
-            Log.LogVerbose("UWM.OnHover");
+            var shortcut = UndressUtilPlugin.Instance.Config.showShortcut.Value;
+            Log.LogInfo("UndressWindow shortcut is [{0}]", shortcut);
+
+            while (true)
+            {
+                yield return null;
+
+                if (shortcut.IsDown())
+                {
+                    if (this.visible)
+                    {
+                        this.HideWindow();
+                    } else
+                    {
+                        this.ShowWindow();
+                    }
+                }
+            }
         }
 
-        private void OnHoverOut()
-        {
-            Log.LogVerbose("UWM.OnHoverOut");
-        }
     }
 }
