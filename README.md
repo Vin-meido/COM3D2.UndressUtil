@@ -5,7 +5,7 @@ Enables the use of the Undressing window in the ADV, Recollection, Scout, and Gu
 
 Uses COM3D2's UI system so the plugin can be used in VR mode (unlike other plugins that use IMGUI).
 
-![demo](https://i.gyazo.com/e72ee1a75a3486af8181aa3c9914d719.mp4)
+[![demo](https://i.gyazo.com/dea45d459e4cd24c11dda277db056d24.png)](https://i.gyazo.com/e72ee1a75a3486af8181aa3c9914d719.mp4)
 
 ## Status
 
