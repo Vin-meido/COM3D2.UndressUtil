@@ -64,7 +64,6 @@
     <Compile Include="Log.cs" />
     <Compile Include="MaidIcon.cs" />
     <Compile Include="UndressUtilConfig.cs" />
-    <Compile Include="GameObjectSearcher.cs" />
     <Compile Include="MaidSelectPanelManager.cs" />
     <Compile Include="MaidTracker.cs" />
     <Compile Include="PartsDB.cs" />
@@ -73,7 +72,6 @@
     <Compile Include="UndressUtilPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UndressWindowManager.cs" />
-    <Compile Include="Window.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

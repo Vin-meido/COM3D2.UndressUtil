@@ -105,8 +105,6 @@ namespace COM3D2.UndressUtil.Plugin
 
         public static UndressUtilPlugin Instance { get; private set; }
 
-        private GameObjectSearcher searcher = new GameObjectSearcher();
-
         public new UndressUtilConfig Config { get; private set; }
 
         internal new ManualLogSource Logger { get
