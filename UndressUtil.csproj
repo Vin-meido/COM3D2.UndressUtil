@@ -61,14 +61,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assert.cs" />
+    <Compile Include="MaidShim.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="MaidIcon.cs" />
+    <Compile Include="UIHelper\Button.cs" />
+    <Compile Include="UIHelper\UIUtils.cs" />
+    <Compile Include="UndressItem\CRCUndressItem.cs" />
+    <Compile Include="UndressItem\HalfUndressItem.cs" />
+    <Compile Include="UndressItem\IUndressItem.cs" />
+    <Compile Include="UndressItem\UndressItem.cs" />
     <Compile Include="UndressUtilConfig.cs" />
     <Compile Include="MaidSelectPanelManager.cs" />
     <Compile Include="MaidTracker.cs" />
     <Compile Include="PartsDB.cs" />
     <Compile Include="Prefabs.cs" />
-    <Compile Include="UndressItem.cs" />
+    <Compile Include="UndressItemManager.cs" />
     <Compile Include="UndressUtilPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UndressWindowManager.cs" />

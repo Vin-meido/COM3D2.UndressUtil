@@ -6,18 +6,16 @@ using UnityEngine;
 
 namespace COM3D2.UndressUtil.Plugin
 {
+	public class PartsData
+	{
+		public MPN mpn;
+		public List<TBody.SlotID> SlotIDlist = new List<TBody.SlotID>();
+		public Texture DefaultIcon;
+		public List<MPN> CrcMpnList = new List<MPN>();
+	}
 
-	class PartsDB
+	public class PartsDB
     {
-		public class PartsData
-		{
-			public MPN mpn;
-			public List<TBody.SlotID> SlotIDlist = new List<TBody.SlotID>();
-			public Texture DefaultIcon;
-			public List<MPN> CrcMpnList = new List<MPN>();
-		}
-
-
 		private Dictionary<MPN, PartsData> mpnPartsData = new Dictionary<MPN, PartsData>();
 		private MPN lastMPN;
 

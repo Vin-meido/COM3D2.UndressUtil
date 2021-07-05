@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using COM3D2.UndressUtil.Plugin.UIHelper;
 
 namespace COM3D2.UndressUtil.Plugin
 {
@@ -14,6 +15,7 @@ namespace COM3D2.UndressUtil.Plugin
             var prefab = ob.transform.Find("DanceUndress").gameObject;
 
             var instance = UnityEngine.Object.Instantiate<GameObject>(prefab, parent.transform, false);
+            //GameObject.Destroy(ob);
 
             // Remove default handlers
             GameObject.Destroy(instance.GetComponent<UndressDance_Mgr>());
@@ -27,7 +29,28 @@ namespace COM3D2.UndressUtil.Plugin
 
             // Set default name
             instance.name = "UndressWindow";
+
+            // Add widget
+            var itemWindowTransform = instance.transform.Find("ItemWindow");
+            Assert.IsNotNull(itemWindowTransform, "Could not find ItemWindow");
+            CreateHalfUndressWidget(itemWindowTransform.gameObject);
+
             return instance;
+        }
+
+        public static GameObject CreateHalfUndressWidget(GameObject parent)
+        {
+            var obj = UIUtils.GetAtlas("AtlasCommon");
+            Assert.IsNotNull(obj, "Cannot find AtlasCommon");
+            var atlas = obj.GetComponent<UIAtlas>();
+
+            var button = Button.Add(parent, atlas, "cm3d2_common_plate_white");
+            var go = button.gameObject;
+            go.name = "HalfUndressButton";
+            button.size = new Vector2(50, 50);
+            button.position = new Vector2(-170, 380);
+            button.label = "Half mode";
+            return button.gameObject;
         }
 
         public static GameObject CreateMaidIcon(GameObject parent)
@@ -48,7 +71,7 @@ namespace COM3D2.UndressUtil.Plugin
         {
             GameObject instance = wf.Utility.CreatePrefab(parent, "SceneDance/Rhythm_Action/Prefab/UndressDance/ItemIcon", true);
             GameObject.Destroy(instance.GetComponent<Dance.UndressItem>());
-            instance.AddComponent<UndressItem>();
+            instance.AddComponent<UndressItemManager>();
             return instance;
         }
     }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 namespace COM3D2.UndressUtil.Plugin
@@ -15,11 +16,20 @@ namespace COM3D2.UndressUtil.Plugin
         GameObject maidGrid;
         UIEventTrigger eventTrigger;
         bool visible = true;
+        public UndressMode mode { get; private set; } = UndressMode.NORMAL;
 
         private Dictionary<UIWFTabButton, Maid> uiTabMaidLookup = new Dictionary<UIWFTabButton, Maid>();
         private Dictionary<Maid, GameObject> maidGameObjectLookup = new Dictionary<Maid, GameObject>();
         public MaidSelectPanelManager MaidSelectPanelManager { get; private set; }
         private MaidTracker maidTracker;
+
+        public readonly UnityEvent UndressModeChangeEvent = new UnityEvent();
+
+        public enum UndressMode
+        {
+            NORMAL,
+            HALFUNDRESS
+        }
 
         public void Awake()
         {
@@ -94,6 +104,7 @@ namespace COM3D2.UndressUtil.Plugin
             SetClickCallback(bg, "TitleBar/End", new EventDelegate.Callback(this.HideWindow));
             SetClickCallback(bg, "AllUndress", new EventDelegate.Callback(this.AllUndress));
             SetClickCallback(bg, "AllDress", new EventDelegate.Callback(this.AllDress));
+            SetClickCallback(this.gameObject, "ItemWindow/HalfUndressButton", new EventDelegate.Callback(this.HalfUndressMode));
         }
 
         private void SetupItemGrid()
@@ -105,7 +116,7 @@ namespace COM3D2.UndressUtil.Plugin
                 var gameObject = Prefabs.CreateItemIcon(this.itemGrid);
                 gameObject.name = String.Format("ItemIcon_{0}", data.mpn);
                 gameObject
-                    .GetComponent<UndressItem>()
+                    .GetComponent<UndressItemManager>()
                     .Init(data.mpn, data);
             }
 
@@ -145,18 +156,24 @@ namespace COM3D2.UndressUtil.Plugin
 
         public void AllUndress()
         {
-            foreach (UndressItem undressItem in this.gameObject.GetComponentsInChildren<UndressItem>())
+            foreach (UndressItemManager undressItem in this.gameObject.GetComponentsInChildren<UndressItemManager>())
             {
-                undressItem.SetMaidMask(MaidSelectPanelManager.SelectedMaid, true);
+                undressItem.Undress();
             }
         }
 
         public void AllDress()
         {
-            foreach (UndressItem undressItem in this.gameObject.GetComponentsInChildren<UndressItem>())
+            foreach (UndressItemManager undressItem in this.gameObject.GetComponentsInChildren<UndressItemManager>())
             {
-                undressItem.SetMaidMask(MaidSelectPanelManager.SelectedMaid, false);
+                undressItem.Dress();
             }
+        }
+
+        public void HalfUndressMode()
+        {
+            this.mode = this.mode == UndressMode.HALFUNDRESS ? UndressMode.NORMAL : UndressMode.HALFUNDRESS;
+            this.UndressModeChangeEvent.Invoke();
         }
 
         private IEnumerator KeyboardCheckCoroutine()

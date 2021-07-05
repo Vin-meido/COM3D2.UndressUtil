@@ -123,17 +123,19 @@ namespace COM3D2.UndressUtil.Plugin
             GameObject.DontDestroyOnLoad(this);
             UndressUtilPlugin.Instance = this;
             this.Config = new UndressUtilConfig(base.Config);
+
+            NDebugShim.Init();
         }
 
         public void OnLevelWasLoaded(int level)
         {
-            if (EnableScenes.Contains(level))
+            if (Config.disableSceneRestrictions.Value || EnableScenes.Contains(level))
             {
                 Log.LogInfo("Setting up UndressWindow");
                 SetupWindow();
             } else
             {
-                Log.LogInfo("Current level [{0}] does not support UndressWindow", level);
+                Log.LogInfo("Current level [{0}] is not supported", level);
             }
         }
 
