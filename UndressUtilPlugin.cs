@@ -12,7 +12,24 @@ using BepInEx.Configuration;
 
 namespace COM3D2.UndressUtil.Plugin
 {
-    [BepInPlugin("org.bepinex.plugins.com3d2.undressutil", "UndressUtil", "1.0.0.0")]
+    public static class Version
+    {
+        public const string NUMBER = "1.0.0.0";
+
+#if DEBUG
+        public const string RELEASE_TYPE = "prerelease";
+#else
+        public const string RELEASE_TYPE = "release";
+#endif
+
+#if CRC_SUPPORT
+        public const string VARIANT = "crc";
+#else
+        public const string VARIANT = "standard";
+#endif
+    }
+
+    [BepInPlugin("org.bepinex.plugins.com3d2.undressutil", "UndressUtil", Version.NUMBER)]
     public class UndressUtilPlugin: BaseUnityPlugin
     {
         private enum Scene
@@ -124,7 +141,10 @@ namespace COM3D2.UndressUtil.Plugin
             UndressUtilPlugin.Instance = this;
             this.Config = new UndressUtilConfig(base.Config);
 
-            NDebugShim.Init();
+            //NDebugShim.Init();
+            //MaidShim.Init();
+            BaseKagManagerShim.Init();
+            Log.LogInfo("Plugin initialized. Version {0}-{1} ({2})", Version.NUMBER, Version.VARIANT, Version.RELEASE_TYPE);
         }
 
         public void OnLevelWasLoaded(int level)

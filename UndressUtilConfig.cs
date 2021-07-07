@@ -10,6 +10,7 @@ namespace COM3D2.UndressUtil.Plugin
     {
         public ConfigEntry<bool> verboseLog;
         public ConfigEntry<bool> autoShowInNonVr;
+        public ConfigEntry<bool> autoHide;
         public ConfigEntry<bool> disableSceneRestrictions;
         public ConfigEntry<KeyboardShortcut> showShortcut;
 
@@ -26,6 +27,12 @@ namespace COM3D2.UndressUtil.Plugin
                 "Auto show outside VR",
                 true,
                 "Automatically show undress window when in non VR mode. Window is always shown when in VR mode.");
+
+            autoHide = conf.Bind(
+                "General",
+                "Auto hide",
+                true,
+                "Automatically hide window when no maids are active.");
 
             disableSceneRestrictions = conf.Bind(
                 "General",

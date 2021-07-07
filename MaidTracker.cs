@@ -8,10 +8,10 @@ using UnityEngine.Events;
 
 namespace COM3D2.UndressUtil.Plugin
 {
-    class MaidTracker: MonoBehaviour
-    {
-        public class MaidEvent: UnityEvent<Maid> { }
+    public class MaidEvent : UnityEvent<Maid> { }
 
+    class MaidTracker : MonoBehaviour
+    {
         public MaidEvent MaidActivated { get; private set; } = new MaidEvent();
         public MaidEvent MaidDeactivated { get; private set; } = new MaidEvent();
 

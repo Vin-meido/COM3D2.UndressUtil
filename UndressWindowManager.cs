@@ -25,6 +25,23 @@ namespace COM3D2.UndressUtil.Plugin
 
         public readonly UnityEvent UndressModeChangeEvent = new UnityEvent();
 
+        private bool IsAutoShow
+        {
+            get
+            {
+                return UndressUtilPlugin.Instance.Config.autoShowInNonVr.Value || GameMain.Instance.VRMode;
+            }
+        }
+
+        private bool IsAutoHide
+        {
+            get
+            {
+                return UndressUtilPlugin.Instance.Config.autoHide.Value;
+            }
+        }
+
+
         public enum UndressMode
         {
             NORMAL,
@@ -65,13 +82,15 @@ namespace COM3D2.UndressUtil.Plugin
             SetupMaidIconList();
             SetupItemGrid();
 
-            if ((!GameMain.Instance.VRMode)
-                && (!UndressUtilPlugin.Instance.Config.autoShowInNonVr.Value))
+            if (this.IsAutoShow)
             {
                 Log.LogVerbose("Auto show disabled, hiding window");
                 this.visible = false;
                 this.gameObject.AddComponent<TweenAlpha>().to = 0;
             }
+
+            this.maidTracker.MaidActivated.AddListener(this.MaidActive);
+            this.maidTracker.MaidDeactivated.AddListener(this.MaidInactive);
 
             SceneManager.sceneUnloaded += this.OnSceneUnloaded;
         }
@@ -138,18 +157,25 @@ namespace COM3D2.UndressUtil.Plugin
 
         public void HideWindow()
         {
+            this.HideWindow(false);
+        }
+
+        public void HideWindow(bool immediate = false)
+        {
             if (this.visible)
             {
-                TweenAlpha.Begin(this.gameObject, 0.5f, 0);
+                var duration = immediate ? 0f : 0.5f;
+                TweenAlpha.Begin(this.gameObject, duration, 0);
                 this.visible = false;
             }
         }
 
-        public void ShowWindow()
+        public void ShowWindow(bool immediate = false)
         {
             if (!this.visible)
             {
-                TweenAlpha.Begin(this.gameObject, 0.5f, 1);
+                var duration = immediate ? 0f : 0.5f;
+                TweenAlpha.Begin(this.gameObject, duration, 1);
                 this.visible = true;
             }
         }
@@ -198,5 +224,20 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
+        private void MaidActive(Maid maid)
+        {
+            if (this.IsAutoShow && !this.visible && this.maidTracker.GetActiveMaids().Count() > 0)
+            {
+                this.ShowWindow();
+            }
+        }
+
+        private void MaidInactive(Maid maid)
+        {
+            if (this.IsAutoHide && this.visible && this.maidTracker.GetActiveMaids().Count() == 0)
+            {
+                this.HideWindow();
+            }
+        }
     }
 }

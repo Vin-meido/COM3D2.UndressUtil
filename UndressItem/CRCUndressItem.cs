@@ -57,10 +57,12 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
         protected virtual void SetMaidMask(bool is_mask_on)
         {
-			foreach (MPN parentMpn in this.partsData.CrcMpnList)
+#if CRC_SUPPORT
+            foreach (MPN parentMpn in this.partsData.CrcMpnList)
 			{
-				// maid.body0.SetMask(parentMpn, !is_mask_on);
+				maid.body0.SetMask(parentMpn, !is_mask_on);
 			}
+#endif
         }
 
     }

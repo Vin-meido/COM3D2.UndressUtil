@@ -3,3 +3,5 @@
 /*.user
 /bin
 /obj
+/libs/jp-2.0/*.dll
+/libs/jp-3.0/*.dll
