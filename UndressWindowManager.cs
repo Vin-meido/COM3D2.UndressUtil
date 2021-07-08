@@ -14,6 +14,7 @@ namespace COM3D2.UndressUtil.Plugin
         GameObject itemWindow;
         GameObject itemGrid;
         GameObject maidGrid;
+        GameObject halfUndressButton;
         UIEventTrigger eventTrigger;
         bool visible = true;
         public UndressMode mode { get; private set; } = UndressMode.NORMAL;
@@ -81,6 +82,7 @@ namespace COM3D2.UndressUtil.Plugin
             SetupComponents();
             SetupMaidIconList();
             SetupItemGrid();
+            SetupHalfUndressButton();
 
             if (this.IsAutoShow)
             {
@@ -123,7 +125,6 @@ namespace COM3D2.UndressUtil.Plugin
             SetClickCallback(bg, "TitleBar/End", new EventDelegate.Callback(this.HideWindow));
             SetClickCallback(bg, "AllUndress", new EventDelegate.Callback(this.AllUndress));
             SetClickCallback(bg, "AllDress", new EventDelegate.Callback(this.AllDress));
-            SetClickCallback(this.gameObject, "ItemWindow/HalfUndressButton", new EventDelegate.Callback(this.HalfUndressMode));
         }
 
         private void SetupItemGrid()
@@ -148,6 +149,14 @@ namespace COM3D2.UndressUtil.Plugin
             var uibtn = btn.GetComponent<UIButton>();
             uibtn.onClick.Clear();
             EventDelegate.Add(uibtn.onClick, callback);
+        }
+
+        private void SetupHalfUndressButton()
+        {
+            halfUndressButton = gameObject.transform.Find("ItemWindow/HalfUndressButton").gameObject;
+            var uiBtn = halfUndressButton.GetComponent<UIButton>();
+            uiBtn.onClick.Clear();
+            EventDelegate.Add(uiBtn.onClick, this.HalfUndressMode);
         }
 
         private void SetupMaidIconList()
@@ -199,6 +208,11 @@ namespace COM3D2.UndressUtil.Plugin
         public void HalfUndressMode()
         {
             this.mode = this.mode == UndressMode.HALFUNDRESS ? UndressMode.NORMAL : UndressMode.HALFUNDRESS;
+
+            var uiBtn = halfUndressButton.GetComponent<UIButton>();
+            uiBtn.defaultColor = this.mode == UndressMode.HALFUNDRESS ? Color.white : Color.gray;
+            uiBtn.UpdateColor(false);
+
             this.UndressModeChangeEvent.Invoke();
         }
 

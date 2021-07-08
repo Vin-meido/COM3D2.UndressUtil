@@ -47,9 +47,10 @@ namespace COM3D2.UndressUtil.Plugin
             var button = Button.Add(parent, atlas, "cm3d2_common_plate_white");
             var go = button.gameObject;
             go.name = "HalfUndressButton";
-            button.size = new Vector2(50, 50);
-            button.position = new Vector2(-170, 380);
-            button.label = "Half mode";
+            button.size = new Vector2(70, 70);
+            button.position = new Vector2(-170, 377);
+            button.label = "Half undress mode";
+            button.backgroundColor = Color.gray;
             return button.gameObject;
         }
 

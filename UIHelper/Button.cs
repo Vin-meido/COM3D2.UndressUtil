@@ -11,6 +11,7 @@ namespace COM3D2.UndressUtil.Plugin.UIHelper
     {
         UILabel uiLabel;
         UISprite uiSprite;
+        UIButton uiButton;
 
         public Vector2 size { get
             {
@@ -48,10 +49,23 @@ namespace COM3D2.UndressUtil.Plugin.UIHelper
             }
         }
 
+        public Color backgroundColor
+        {
+            get
+            {
+                return uiButton.defaultColor;
+            }
+            set
+            {
+                uiButton.defaultColor = value;
+                uiButton.UpdateColor(false);
+            }
+        }
+
         public void Awake() {
             uiSprite = gameObject.GetComponent<UISprite>();
             NGUITools.AddWidgetCollider(gameObject);
-            gameObject.AddComponent<UIButton>();
+            uiButton = gameObject.AddComponent<UIButton>();
 
             uiLabel = NGUITools.AddWidget<UILabel>(gameObject);
             uiLabel.trueTypeFont = UIUtils.GetFont("NotoSansCJKjp-DemiLight");
