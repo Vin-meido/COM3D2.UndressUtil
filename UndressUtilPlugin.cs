@@ -143,7 +143,7 @@ namespace COM3D2.UndressUtil.Plugin
 
             //NDebugShim.Init();
             //MaidShim.Init();
-            BaseKagManagerShim.Init();
+            //BaseKagManagerShim.Init();
             Log.LogInfo("Plugin initialized. Version {0}-{1} ({2})", Version.NUMBER, Version.VARIANT, Version.RELEASE_TYPE);
         }
 

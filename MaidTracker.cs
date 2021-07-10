@@ -6,6 +6,8 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 
+using COM3D2.UndressUtil.Plugin.Hooks;
+
 namespace COM3D2.UndressUtil.Plugin
 {
     public class MaidEvent : UnityEvent<Maid> { }
@@ -18,14 +20,42 @@ namespace COM3D2.UndressUtil.Plugin
         private Dictionary<Maid, bool> maidOldStatus = new Dictionary<Maid, bool>();
         private int pollRate = 1;
 
+        public void Awake()
+        {
+            Log.LogVerbose("MaidTracker.Awake [{0}]", this.GetInstanceID());
+        }
+
         public void Start()
         {
+            Log.LogVerbose("MaidTracker.Start [{0}]", this.GetInstanceID());
             
+            var total_maids = GameMain.Instance.CharacterMgr.GetMaidCount();
+
+            for (var i = 0; i < total_maids; i++)
+            {
+                var maid = GameMain.Instance.CharacterMgr.GetMaid(i);
+                if (maid != null && maid.isActiveAndEnabled) {
+                    this.ActivateMaid(maid);
+                }
+            }
+
+            BaseKagManagerHooks.Init();
+            //CharacterMgrHooks.Init();
+            BaseKagManagerHooks.MaidActivated.AddListener(this.ActivateMaid);
+            BaseKagManagerHooks.MaidDeactivated.AddListener(this.DeactivateMaid);
+        }
+
+
+        public void OnDestroy()
+        {
+            Log.LogVerbose("MaidTracker.OnDestroy [{0}]", this.GetInstanceID());
+            CharacterMgrHooks.MaidActivated.RemoveListener(this.ActivateMaid);
+            CharacterMgrHooks.MaidDeactivated.RemoveListener(this.DeactivateMaid);
         }
 
         public void OnEnable()
         {
-            StartCoroutine(this.Coroutine());
+            //StartCoroutine(this.Coroutine());
         }
 
         public IEnumerable<Maid> GetActiveMaids()
@@ -88,12 +118,14 @@ namespace COM3D2.UndressUtil.Plugin
         private void ActivateMaid(Maid maid)
         {
             Log.LogVerbose("Activate maid: {0}", maid);
+            maidOldStatus[maid] = true;
             MaidActivated.Invoke(maid);
         }
 
         private void DeactivateMaid(Maid maid)
         {
             Log.LogVerbose("Deactivate maid: {0}", maid);
+            maidOldStatus[maid] = false;
             MaidDeactivated.Invoke(maid);
         }
     }

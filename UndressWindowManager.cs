@@ -84,7 +84,7 @@ namespace COM3D2.UndressUtil.Plugin
             SetupItemGrid();
             SetupHalfUndressButton();
 
-            if (this.IsAutoShow)
+            if (!this.IsAutoShow)
             {
                 Log.LogVerbose("Auto show disabled, hiding window");
                 this.visible = false;

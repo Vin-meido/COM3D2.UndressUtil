@@ -54,6 +54,22 @@ namespace COM3D2.UndressUtil.Plugin
                 Instance.TagItemSetEvent.Invoke(maid);
             }
         }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(BaseKagManager.TagCharaActivate))]
+        static void TagCharaActivate(KagTagSupport tag_data, BaseKagManager __instance)
+        {
+            var maid = __instance.GetMaidAndMan(tag_data, true);
+            Log.LogVerbose("BaseKagManager.TagCharaActivate {0}", maid);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(BaseKagManager.TagCharaVisible))]
+        static void TagCharaVisible(KagTagSupport tag_data, BaseKagManager __instance)
+        {
+            var maid = __instance.GetMaidAndMan(tag_data, true);
+            Log.LogVerbose("BaseKagManager.TagCharaVisible {0}", maid);
+        }
     }
 
 

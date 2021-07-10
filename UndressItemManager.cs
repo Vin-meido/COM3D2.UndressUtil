@@ -126,18 +126,23 @@ namespace COM3D2.UndressUtil.Plugin
 		}
 
 		public void AddMaidData(Maid maid)
+        {
+			this.AddMaidData(maid, true);
+        }
+
+		public void AddMaidData(Maid maid, bool forceUpdate)
 		{
 			if (!maid)
 			{
 				return;
 			}
 
-			if (!maidUndressItemLookup.ContainsKey(maid))
+			if (forceUpdate || !maidUndressItemLookup.ContainsKey(maid))
             {
 				this.maidUndressItemLookup[maid] = UndressItem.UndressItem.ForMaid(maid, this.data);
 			}
 
-			if (!maidHalfUndressItemLookup.ContainsKey(maid))
+			if (forceUpdate || !maidHalfUndressItemLookup.ContainsKey(maid))
             {
 				this.maidHalfUndressItemLookup[maid] = UndressItem.HalfUndressItem.ForMaid(maid, this.data);
 			}

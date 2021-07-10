@@ -53,16 +53,21 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
         public static IUndressItem ForMaid(Maid maid, PartsData part)
         {
             MaidProp prop = maid.GetProp(part.mpn);
-            if (string.IsNullOrEmpty(prop.strFileName) || prop.strFileName.IndexOf("_del") >= 1)
+
+            var filename = string.IsNullOrEmpty(prop.strTempFileName) ? prop.strFileName : prop.strTempFileName;
+
+            if (string.IsNullOrEmpty(filename) || filename.IndexOf("_del") >= 1)
             {
                 return null;
             }
+
+            Log.LogVerbose("Undress item {0} {1} [{2}]", maid, part.mpn, filename);
 
             return new UndressItem()
             {
                 maid = maid,
                 partsData = part,
-                Icon = GetIcon(prop.strFileName),
+                Icon = GetIcon(filename),
                 Active = true,
             };
         }
