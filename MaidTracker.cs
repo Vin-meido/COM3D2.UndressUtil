@@ -39,8 +39,6 @@ namespace COM3D2.UndressUtil.Plugin
                 }
             }
 
-            BaseKagManagerHooks.Init();
-            //CharacterMgrHooks.Init();
             BaseKagManagerHooks.MaidActivated.AddListener(this.ActivateMaid);
             BaseKagManagerHooks.MaidDeactivated.AddListener(this.DeactivateMaid);
         }

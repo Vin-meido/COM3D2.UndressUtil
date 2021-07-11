@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>COM3D2.UndressUtil.Plugin</RootNamespace>
-    <AssemblyName>UndressUtil</AssemblyName>
+    <AssemblyName>COM3D2.UndressUtil</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -67,10 +67,6 @@
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass" Condition="'$(Configuration)' != 'jp-3.0'">
       <HintPath>libs\Assembly-CSharp-firstpass.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Assembly-UnityScript-firstpass" Condition="'$(Configuration)' != 'jp-3.0'">
-      <HintPath>libs\Assembly-UnityScript-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp" Condition="'$(Configuration)' == 'jp-3.0'">

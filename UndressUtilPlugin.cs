@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Reflection;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.VR;
 using BepInEx;
 using BepInEx.Logging;
-using BepInEx.Configuration;
+using COM3D2.UndressUtil.Plugin.Hooks;
+
 
 namespace COM3D2.UndressUtil.Plugin
 {
@@ -141,9 +137,8 @@ namespace COM3D2.UndressUtil.Plugin
             UndressUtilPlugin.Instance = this;
             this.Config = new UndressUtilConfig(base.Config);
 
-            //NDebugShim.Init();
-            //MaidShim.Init();
-            //BaseKagManagerShim.Init();
+            BaseKagManagerHooks.Init();
+
             Log.LogInfo("Plugin initialized. Version {0}-{1} ({2})", Version.NUMBER, Version.VARIANT, Version.RELEASE_TYPE);
         }
 
