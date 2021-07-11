@@ -23,9 +23,9 @@ namespace COM3D2.UndressUtil.Plugin
 #endif
 
 #if CRC_SUPPORT
-        public const string VARIANT = "crc";
-#else
         public const string VARIANT = "standard";
+#else
+        public const string VARIANT = "non-crc";
 #endif
     }
 
