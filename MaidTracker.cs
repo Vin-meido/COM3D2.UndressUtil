@@ -20,6 +20,8 @@ namespace COM3D2.UndressUtil.Plugin
         private Dictionary<Maid, bool> maidOldStatus = new Dictionary<Maid, bool>();
         private int pollRate = 1;
 
+        private UndressUtilConfig config => UndressUtilPlugin.Instance.Config;
+
         public void Awake()
         {
             Log.LogVerbose("MaidTracker.Awake [{0}]", this.GetInstanceID());
@@ -28,32 +30,53 @@ namespace COM3D2.UndressUtil.Plugin
         public void Start()
         {
             Log.LogVerbose("MaidTracker.Start [{0}]", this.GetInstanceID());
-            
+            this.Refresh();
+
+
+            if (!UndressUtilPlugin.Instance.Config.useMaidPolling.Value)
+            {
+                BaseKagManagerHooks.Init();
+            }
+
+            if (!this.config.useMaidPolling.Value)
+            {
+                BaseKagManagerHooks.MaidActivated.AddListener(this.ActivateMaid);
+                BaseKagManagerHooks.MaidDeactivated.AddListener(this.DeactivateMaid);
+            }
+        }
+
+        public void Refresh()
+        {
+            maidOldStatus.Clear();
             var total_maids = GameMain.Instance.CharacterMgr.GetMaidCount();
 
             for (var i = 0; i < total_maids; i++)
             {
                 var maid = GameMain.Instance.CharacterMgr.GetMaid(i);
-                if (maid != null && maid.isActiveAndEnabled) {
+                if (maid != null && maid.isActiveAndEnabled)
+                {
                     this.ActivateMaid(maid);
                 }
             }
-
-            BaseKagManagerHooks.MaidActivated.AddListener(this.ActivateMaid);
-            BaseKagManagerHooks.MaidDeactivated.AddListener(this.DeactivateMaid);
         }
 
 
         public void OnDestroy()
         {
             Log.LogVerbose("MaidTracker.OnDestroy [{0}]", this.GetInstanceID());
-            CharacterMgrHooks.MaidActivated.RemoveListener(this.ActivateMaid);
-            CharacterMgrHooks.MaidDeactivated.RemoveListener(this.DeactivateMaid);
+            if (!this.config.useMaidPolling.Value)
+            {
+                CharacterMgrHooks.MaidActivated.RemoveListener(this.ActivateMaid);
+                CharacterMgrHooks.MaidDeactivated.RemoveListener(this.DeactivateMaid);
+            }
         }
 
         public void OnEnable()
         {
-            //StartCoroutine(this.Coroutine());
+            if (this.config.useMaidPolling.Value)
+            {
+                StartCoroutine(this.Coroutine());
+            }
         }
 
         public IEnumerable<Maid> GetActiveMaids()

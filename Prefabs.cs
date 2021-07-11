@@ -34,6 +34,23 @@ namespace COM3D2.UndressUtil.Plugin
             var itemWindowTransform = instance.transform.Find("ItemWindow");
             Assert.IsNotNull(itemWindowTransform, "Could not find ItemWindow");
             CreateHalfUndressWidget(itemWindowTransform.gameObject);
+            CreateRefreshWidget(itemWindowTransform.gameObject);
+
+            // Fix colliders
+            var bgTransform = instance.transform.Find("ItemWindow/BG");
+            Assert.IsNotNull(bgTransform, "Could not find BG");
+            bgTransform.gameObject.GetComponent<UISprite>().ResizeCollider();
+
+            var takeEventTransform = instance.transform.Find("TakeEvent");
+            Assert.IsNotNull(takeEventTransform, "Could not find take event transform");
+            GameObject.Destroy(takeEventTransform.gameObject);
+
+            // Relayout maid icons
+            var maidIconTransform = instance.transform.Find("ItemWindow/MaidIcon");
+            maidIconTransform.localPosition = new Vector3(-170, 200);
+            var maidUiGrid = maidIconTransform.gameObject.GetComponent<UIGrid>();
+            maidUiGrid.arrangement = UIGrid.Arrangement.Vertical;
+            maidUiGrid.pivot = UIWidget.Pivot.TopLeft;
 
             return instance;
         }
@@ -51,6 +68,21 @@ namespace COM3D2.UndressUtil.Plugin
             button.position = new Vector2(-170, 377);
             button.label = "Half undress mode";
             button.backgroundColor = Color.gray;
+            return button.gameObject;
+        }
+
+        public static GameObject CreateRefreshWidget(GameObject parent)
+        {
+            var obj = UIUtils.GetAtlas("AtlasCommon");
+            Assert.IsNotNull(obj, "Cannot find AtlasCommon");
+            var atlas = obj.GetComponent<UIAtlas>();
+
+            var button = Button.Add(parent, atlas, "cm3d2_common_plate_white");
+            var go = button.gameObject;
+            go.name = "RefreshButton";
+            button.size = new Vector2(70, 70);
+            button.position = new Vector2(-170, 300);
+            button.label = "Refresh";
             return button.gameObject;
         }
 

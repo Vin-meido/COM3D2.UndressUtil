@@ -23,6 +23,7 @@ namespace COM3D2.UndressUtil.Plugin
         private Dictionary<Maid, GameObject> maidGameObjectLookup = new Dictionary<Maid, GameObject>();
         public MaidSelectPanelManager MaidSelectPanelManager { get; private set; }
         private MaidTracker maidTracker;
+        private UndressItemManager undressItemManager;
 
         public readonly UnityEvent UndressModeChangeEvent = new UnityEvent();
 
@@ -83,6 +84,7 @@ namespace COM3D2.UndressUtil.Plugin
             SetupMaidIconList();
             SetupItemGrid();
             SetupHalfUndressButton();
+            SetupRefreshButton();
 
             if (!this.IsAutoShow)
             {
@@ -159,6 +161,14 @@ namespace COM3D2.UndressUtil.Plugin
             EventDelegate.Add(uiBtn.onClick, this.HalfUndressMode);
         }
 
+        private void SetupRefreshButton()
+        {
+            var button = gameObject.transform.Find("ItemWindow/RefreshButton").gameObject;
+            var uiBtn = button.GetComponent<UIButton>();
+            uiBtn.onClick.Clear();
+            EventDelegate.Add(uiBtn.onClick, this.Refresh);
+        }
+
         private void SetupMaidIconList()
         {
             MaidSelectPanelManager = this.maidGrid.AddComponent<MaidSelectPanelManager>();
@@ -214,6 +224,19 @@ namespace COM3D2.UndressUtil.Plugin
             uiBtn.UpdateColor(false);
 
             this.UndressModeChangeEvent.Invoke();
+        }
+
+        public void Refresh()
+        {
+            maidTracker.Refresh();
+            foreach (var maid in maidTracker.GetActiveMaids())
+            {
+                foreach (UndressItemManager undressItem in this.gameObject.GetComponentsInChildren<UndressItemManager>())
+                {
+                    undressItem.AddMaidData(maid, true);
+                    undressItem.UpdateState();
+                }
+            }
         }
 
         private IEnumerator KeyboardCheckCoroutine()

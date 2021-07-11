@@ -12,6 +12,7 @@ namespace COM3D2.UndressUtil.Plugin
         public ConfigEntry<bool> autoShowInNonVr;
         public ConfigEntry<bool> autoHide;
         public ConfigEntry<bool> disableSceneRestrictions;
+        public ConfigEntry<bool> useMaidPolling;
         public ConfigEntry<KeyboardShortcut> showShortcut;
 
         public UndressUtilConfig(ConfigFile conf)
@@ -39,6 +40,12 @@ namespace COM3D2.UndressUtil.Plugin
                 "Disable scene restrictions",
                 false,
                 "Allow using undress window regardless of scene type");
+
+            useMaidPolling = conf.Bind(
+                "General",
+                "Use maid polling",
+                true,
+                "Rely on polling the scene for maids instead of hooks. Enable if the maid list is not getting updated properly.");
 
             verboseLog = conf.Bind(
                 "General",

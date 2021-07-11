@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,6 +38,17 @@ namespace COM3D2.UndressUtil.Plugin
             maidTracker.MaidDeactivated.RemoveListener(this.OnMaidDeactivated);
         }
 
+        public void RepositionIcons()
+        {
+            StartCoroutine(RepositionIconsCoroutine());
+        }
+
+        IEnumerator RepositionIconsCoroutine()
+        {
+            yield return null;
+            maidGrid.GetComponent<UIGrid>().Reposition();
+        }
+
         private void OnMaidActivated(Maid maid)
         {
             if (maidGameObjectLookup.ContainsKey(maid))
@@ -53,12 +65,12 @@ namespace COM3D2.UndressUtil.Plugin
 
             maidGameObjectLookup[maid] = gameObject;
 
-            maidGrid.GetComponent<UIGrid>().Reposition();
-
             if (this.SelectedMaid == null)
             {
                 OnMaidIconClick(maid);
             }
+
+            RepositionIcons();
         }
 
         private void OnMaidDeactivated(Maid maid)
@@ -71,13 +83,13 @@ namespace COM3D2.UndressUtil.Plugin
                 obj.SetActive(false);
                 Destroy(obj);
                 maidGameObjectLookup.Remove(maid);
-                maidGrid.GetComponent<UIGrid>().Reposition();
-                
+
                 if (this.SelectedMaid == maid)
                 {
                     SelectNextActiveMaid();
                 }
             }
+            RepositionIcons();
         }
 
         private void SelectNextActiveMaid()

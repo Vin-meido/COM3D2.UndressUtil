@@ -127,7 +127,7 @@ namespace COM3D2.UndressUtil.Plugin
 
 		public void AddMaidData(Maid maid)
         {
-			this.AddMaidData(maid, true);
+			this.AddMaidData(maid, false);
         }
 
 		public void AddMaidData(Maid maid, bool forceUpdate)

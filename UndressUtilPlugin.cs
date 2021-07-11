@@ -137,7 +137,10 @@ namespace COM3D2.UndressUtil.Plugin
             UndressUtilPlugin.Instance = this;
             this.Config = new UndressUtilConfig(base.Config);
 
-            BaseKagManagerHooks.Init();
+            if (!Config.useMaidPolling.Value)
+            {
+                BaseKagManagerHooks.Init();
+            }
 
             Log.LogInfo("Plugin initialized. Version {0}-{1} ({2})", Version.NUMBER, Version.VARIANT, Version.RELEASE_TYPE);
         }
