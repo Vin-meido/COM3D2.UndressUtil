@@ -10,11 +10,6 @@ Uses COM3D2's UI system so the plugin can be used in VR mode (unlike other plugi
  With experimental half undress support.
 
 
-## Status
-
-Pre release
-
-
 ## Notes and known issues
 
 Not tested but should work for JP version 2.1.2+. Compatibility with CRC bodies on JP version 3.x unknown.
