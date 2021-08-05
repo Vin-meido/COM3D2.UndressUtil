@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using BepInEx;
@@ -126,6 +127,14 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
+        private bool IsAutoShow
+        {
+            get
+            {
+                return Config.autoShowInNonVr.Value || GameMain.Instance.VRMode;
+            }
+        }
+
         public void Awake()
         {
             if (UndressUtilPlugin.Instance != null)
@@ -147,21 +156,46 @@ namespace COM3D2.UndressUtil.Plugin
 
         public void OnLevelWasLoaded(int level)
         {
+            this.StopAllCoroutines();
+            this.StartCoroutine(this.OnLevelLoadedCoroutine(level));
+        }
+
+        public IEnumerator OnLevelLoadedCoroutine(int level)
+        {
+
             if (Config.disableSceneRestrictions.Value || EnableScenes.Contains(level))
             {
+                if (this.IsAutoShow)
+                {
+                    yield return new WaitForSeconds(1);
+                }
+                else
+                {
+                    yield return new WaitUntil(Config.showShortcut.Value.IsDown);
+                }
+
                 Log.LogInfo("Setting up UndressWindow");
                 SetupWindow();
-            } else
+            }
+            else
             {
                 Log.LogInfo("Current level [{0}] is not supported", level);
             }
+
         }
 
         public void SetupWindow()
         {
             GameObject uiroot = GameObject.Find("SystemUI Root");
             Assert.IsNotNull(uiroot, "Could not find SystemUI Root");
-            Prefabs.CreateUndressWindow(uiroot);
+            var obj = Prefabs.CreateUndressWindow(uiroot);
+
+            if (!this.IsAutoShow)
+            {
+                // means this was triggered via hotkey, show window immediately
+                var manager = obj.GetComponent<UndressWindowManager>();
+                manager.ShowWindow();
+            }
         }
     }
 }

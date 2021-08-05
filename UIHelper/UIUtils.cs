@@ -8,11 +8,28 @@ namespace COM3D2.UndressUtil.Plugin.UIHelper
 {
     static class UIUtils
     {
+        static readonly Dictionary<string, UIAtlas> atlasCache = new Dictionary<string, UIAtlas>();
+
         public static UIAtlas GetAtlas(string name)
         {
-            return Resources.FindObjectsOfTypeAll<UIAtlas>()
+            if(atlasCache.ContainsKey(name))
+            {
+                return atlasCache[name];
+            }
+
+            var obj = Resources.FindObjectsOfTypeAll<UIAtlas>()
                 .Where(o => o.name == name)
                 .FirstOrDefault();
+
+            if (obj != null)
+            {
+                var cachedObj = GameObject.Instantiate(obj);
+                GameObject.DontDestroyOnLoad(cachedObj);
+                atlasCache[name] = cachedObj;
+                return cachedObj;
+            }
+
+            return null;
         }
 
         public static Font GetFont(string name)

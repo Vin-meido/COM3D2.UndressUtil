@@ -74,6 +74,8 @@ namespace COM3D2.UndressUtil.Plugin
             Assert.IsNotNull(this.eventTrigger, "Could not find event trigger");
 
             this.gameObject.AddComponent<TweenAlpha>();
+
+            this.HideWindow(true);
         }
 
         public void Start()
@@ -85,13 +87,6 @@ namespace COM3D2.UndressUtil.Plugin
             SetupItemGrid();
             SetupHalfUndressButton();
             SetupRefreshButton();
-
-            if (!this.IsAutoShow)
-            {
-                Log.LogVerbose("Auto show disabled, hiding window");
-                this.visible = false;
-                this.gameObject.AddComponent<TweenAlpha>().to = 0;
-            }
 
             this.maidTracker.MaidActivated.AddListener(this.MaidActive);
             this.maidTracker.MaidDeactivated.AddListener(this.MaidInactive);

@@ -115,6 +115,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) F:\COM-3d2\BepinEx\plugins</PostBuildEvent>
+    <PostBuildEvent>cd $(OutDir)
+mkdir BepinEx\Plugins
+copy $(TargetPath) BepinEx\plugins
+tar -cvaf $(TargetName).zip BepinEx
+explorer.exe .
+copy $(TargetPath) F:\COM-3d2\BepinEx\plugins</PostBuildEvent>
   </PropertyGroup>
 </Project>
