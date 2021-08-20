@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using BepInEx;
 using BepInEx.Logging;
+
 using COM3D2.UndressUtil.Plugin.Hooks;
 
 
@@ -14,7 +16,7 @@ namespace COM3D2.UndressUtil.Plugin
         public const string NUMBER = "1.0.0.0";
 
 #if DEBUG
-        public const string RELEASE_TYPE = "prerelease";
+        public const string RELEASE_TYPE = "debug";
 #else
         public const string RELEASE_TYPE = "release";
 #endif
@@ -29,7 +31,7 @@ namespace COM3D2.UndressUtil.Plugin
     [BepInPlugin("org.bepinex.plugins.com3d2.undressutil", "UndressUtil", Version.NUMBER)]
     public class UndressUtilPlugin: BaseUnityPlugin
     {
-        private enum Scene
+        private enum SceneTypeEnum
         {
             /// <summary>メイド選択(夜伽、品評会の前など)</summary>
             SceneCharacterSelect = 1,
@@ -111,10 +113,10 @@ namespace COM3D2.UndressUtil.Plugin
         }
 
         private static int[] EnableScenes = {
-            (int)Scene.SceneADV,
-            (int)Scene.SceneRecollection,
-            (int)Scene.SceneGuestMode,
-            (int)Scene.SceneScoutMode,
+            (int)SceneTypeEnum.SceneADV,
+            (int)SceneTypeEnum.SceneRecollection,
+            (int)SceneTypeEnum.SceneGuestMode,
+            (int)SceneTypeEnum.SceneScoutMode,
         };
 
         public static UndressUtilPlugin Instance { get; private set; }
@@ -154,10 +156,20 @@ namespace COM3D2.UndressUtil.Plugin
             Log.LogInfo("Plugin initialized. Version {0}-{1} ({2})", Version.NUMBER, Version.VARIANT, Version.RELEASE_TYPE);
         }
 
-        public void OnLevelWasLoaded(int level)
+        public void OnEnable()
+        {
+            SceneManager.sceneLoaded += this.OnSceneLoaded;
+        }
+
+        public void OnDisable()
+        {
+            SceneManager.sceneLoaded -= this.OnSceneLoaded;
+        }
+
+        public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             this.StopAllCoroutines();
-            this.StartCoroutine(this.OnLevelLoadedCoroutine(level));
+            this.StartCoroutine(this.OnLevelLoadedCoroutine(scene.buildIndex));
         }
 
         public IEnumerator OnLevelLoadedCoroutine(int level)
@@ -165,12 +177,15 @@ namespace COM3D2.UndressUtil.Plugin
 
             if (Config.disableSceneRestrictions.Value || EnableScenes.Contains(level))
             {
+                Log.LogInfo("UndressWindow shortcut is [{0}]", Config.showShortcut.Value);
+
                 if (this.IsAutoShow)
                 {
                     yield return new WaitForSeconds(1);
                 }
                 else
                 {
+                    Log.LogInfo("Waiting for UndressWindow shortcut");
                     yield return new WaitUntil(Config.showShortcut.Value.IsDown);
                 }
 

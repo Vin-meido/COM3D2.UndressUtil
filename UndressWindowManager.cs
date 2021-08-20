@@ -91,6 +91,11 @@ namespace COM3D2.UndressUtil.Plugin
             this.maidTracker.MaidActivated.AddListener(this.MaidActive);
             this.maidTracker.MaidDeactivated.AddListener(this.MaidInactive);
 
+            if(this.maidTracker.GetActiveMaids().Count() > 0)
+            {
+                this.ShowWindow(true);
+            }
+
             SceneManager.sceneUnloaded += this.OnSceneUnloaded;
         }
 
@@ -237,8 +242,6 @@ namespace COM3D2.UndressUtil.Plugin
         private IEnumerator KeyboardCheckCoroutine()
         {
             var shortcut = UndressUtilPlugin.Instance.Config.showShortcut.Value;
-            Log.LogInfo("UndressWindow shortcut is [{0}]", shortcut);
-
             while (true)
             {
                 yield return null;
