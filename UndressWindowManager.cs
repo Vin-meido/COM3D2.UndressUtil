@@ -90,6 +90,8 @@ namespace COM3D2.UndressUtil.Plugin
 
             this.maidTracker.MaidActivated.AddListener(this.MaidActive);
             this.maidTracker.MaidDeactivated.AddListener(this.MaidInactive);
+            this.maidTracker.MaidPropUpdated.AddListener(this.MaidPropUpdate);
+
 
             if(this.maidTracker.GetActiveMaids().Count() > 0)
             {
@@ -273,6 +275,36 @@ namespace COM3D2.UndressUtil.Plugin
             {
                 this.HideWindow();
             }
+        }
+
+        private bool maidPropUpdateTriggered = false;
+        private bool maidPropUpdateCoroutineStarted = false;
+
+        private void MaidPropUpdate(Maid maid)
+        {
+            if (!maidPropUpdateTriggered)
+            {
+                maidPropUpdateTriggered = true;
+            }
+
+            if (!maidPropUpdateCoroutineStarted) { 
+                maidPropUpdateCoroutineStarted = true;
+                this.StartCoroutine(MaidPropUpdateCoroutine());
+            }
+        }
+
+        private IEnumerator MaidPropUpdateCoroutine()
+        {
+            Log.LogVerbose("Waiting for maid prop updates to stop");
+            while (maidPropUpdateTriggered)
+            {
+                maidPropUpdateTriggered = false;
+                yield return new WaitForSeconds(1);
+            }
+
+            Log.LogVerbose("Maid prop updates ended, refreshing window.");
+            this.Refresh();
+            maidPropUpdateCoroutineStarted = false;
         }
     }
 }

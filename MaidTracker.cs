@@ -16,6 +16,7 @@ namespace COM3D2.UndressUtil.Plugin
     {
         public MaidEvent MaidActivated { get; private set; } = new MaidEvent();
         public MaidEvent MaidDeactivated { get; private set; } = new MaidEvent();
+        public MaidEvent MaidPropUpdated { get; private set; } = new MaidEvent();
 
         private Dictionary<Maid, bool> maidOldStatus = new Dictionary<Maid, bool>();
         private int pollRate = 1;
@@ -32,17 +33,15 @@ namespace COM3D2.UndressUtil.Plugin
             Log.LogVerbose("MaidTracker.Start [{0}]", this.GetInstanceID());
             this.Refresh();
 
-
-            if (!UndressUtilPlugin.Instance.Config.useMaidPolling.Value)
-            {
-                BaseKagManagerHooks.Init();
-            }
+            BaseKagManagerHooks.Init();
 
             if (!this.config.useMaidPolling.Value)
             {
                 BaseKagManagerHooks.MaidActivated.AddListener(this.ActivateMaid);
                 BaseKagManagerHooks.MaidDeactivated.AddListener(this.DeactivateMaid);
             }
+
+            BaseKagManagerHooks.MaidPropUpdated.AddListener(this.UpdateMaidProp);
         }
 
         public void Refresh()
@@ -148,6 +147,12 @@ namespace COM3D2.UndressUtil.Plugin
             Log.LogVerbose("Deactivate maid: {0}", maid);
             maidOldStatus[maid] = false;
             MaidDeactivated.Invoke(maid);
+        }
+
+        private void UpdateMaidProp(Maid maid)
+        {
+            Log.LogVerbose("Update maid props: {0}", maid);
+            MaidPropUpdated.Invoke(maid);
         }
     }
 }

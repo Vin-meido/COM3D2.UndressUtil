@@ -63,12 +63,19 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
             Log.LogVerbose("Undress item {0} {1} [{2}]", maid, part.mpn, filename);
 
+            bool isActive = false;
+            foreach (TBody.SlotID f_eSlot in part.SlotIDlist)
+            {
+                isActive = maid.body0.GetMask(f_eSlot);
+                if (isActive) break;
+            }
+
             return new UndressItem()
             {
                 maid = maid,
                 partsData = part,
                 Icon = GetIcon(filename),
-                Active = true,
+                Active = isActive,
             };
         }
 

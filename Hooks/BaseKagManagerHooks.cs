@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,27 +28,19 @@ namespace COM3D2.UndressUtil.Plugin.Hooks
             }
         }
 
-
-        [HarmonyPostfix]
-        [HarmonyPatch(nameof(BaseKagManager.TagItemSet))]
-        static void TagItemSet(KagTagSupport tag_data, BaseKagManager __instance)
-        {
-            var maid = BaseKagManager_GetMaid(__instance, tag_data);
-            if (maid != null)
-            {
-                Log.LogVerbose("BaseKagManager.TagItemSet for maid {0}", maid);
-                MaidPropUpdated.Invoke(maid);
-            }
-        }
-
         [HarmonyPostfix]
         [HarmonyPatch(nameof(BaseKagManager.TagItemReset))]
-        static void TagItemReset(KagTagSupport tag_data, BaseKagManager __instance)
+        [HarmonyPatch(nameof(BaseKagManager.TagItemSet))]
+        [HarmonyPatch(nameof(BaseKagManager.TagPropSet))]
+        [HarmonyPatch(nameof(BaseKagManager.TagPropReset))]
+        [HarmonyPatch(nameof(BaseKagManager.TagItemMask))]
+        [HarmonyPatch(nameof(BaseKagManager.TagItemMaskMode))]
+        static void TagItemReset(KagTagSupport tag_data, BaseKagManager __instance, MethodBase __originalMethod)
         {
             var maid = BaseKagManager_GetMaid(__instance, tag_data);
             if (maid != null)
             {
-                Log.LogVerbose("BaseKagManager.TagItemReset for maid {0}", maid);
+                Log.LogVerbose("BaseKagManager.{1} for maid {0}", maid, __originalMethod.Name);
                 MaidPropUpdated.Invoke(maid);
             }
         }
