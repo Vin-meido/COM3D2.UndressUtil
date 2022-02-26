@@ -172,7 +172,7 @@ namespace COM3D2.UndressUtil.Plugin
 			var item = GetUndressItem();
 			if (item != null)
 			{
-				this.icon.mainTexture = item.Icon;
+				this.icon.mainTexture = item.Icon ?? this.data.DefaultIcon;
 				this.button.defaultColor = item.Color;
 				this.button.isEnabled = true;
 				this.button.UpdateColor(false);
