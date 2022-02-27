@@ -75,7 +75,7 @@ namespace COM3D2.UndressUtil.Plugin
 
             this.gameObject.AddComponent<TweenAlpha>();
 
-            this.HideWindow(true);
+            this.DoHideWindow(true);
         }
 
         public void Start()
@@ -183,10 +183,10 @@ namespace COM3D2.UndressUtil.Plugin
 
         public void HideWindow()
         {
-            this.HideWindow(false);
+            this.DoHideWindow(false);
         }
 
-        public void HideWindow(bool immediate = false)
+        public void DoHideWindow(bool immediate = false)
         {
             if (this.visible)
             {
