@@ -48,18 +48,27 @@ namespace COM3D2.UndressUtil.Plugin
         {
             maidOldStatus.Clear();
 
-            foreach (var maid in GetUndressTargets())
+            foreach (var maid in GetUndressTargets(true))
             {
                 this.ActivateMaid(maid);
             }
         }
 
-        public IEnumerable<Maid> GetUndressTargets()
+        public IEnumerable<Maid> GetUndressTargets(bool verbose=false)
         {
             var total_maids = GameMain.Instance.CharacterMgr.GetMaidCount();
+#if DEBUG
+            if (verbose) Log.LogVerbose("Total maids: {0}", total_maids);
+#endif
+
             for (var i = 0; i < total_maids; i++)
             {
                 var maid = GameMain.Instance.CharacterMgr.GetMaid(i);
+
+#if DEBUG
+                if (verbose && maid != null) Log.LogVerbose("Maid:{0} CRC:{1} Active:{2}", maid, maid?.IsCrcBody, maid?.isActiveAndEnabled);
+#endif
+
                 if (maid != null && maid.isActiveAndEnabled)
                 {
                     yield return maid;
@@ -67,9 +76,16 @@ namespace COM3D2.UndressUtil.Plugin
             }
 
             var total_man = GameMain.Instance.CharacterMgr.GetManCount();
+#if DEBUG
+            if (verbose) Log.LogVerbose("Total man: {0}", total_man);
+#endif
+
             for (var i = 0; i < total_man; i++)
             {
                 var man = GameMain.Instance.CharacterMgr.GetMan(i);
+#if DEBUG
+                if(verbose) Log.LogVerbose("Man:{0} CRC:{1} Active:{2}", man, man?.IsCrcBody, man?.isActiveAndEnabled);
+#endif
                 if (man != null && man.IsCrcBody && man.isActiveAndEnabled)
                 {
                     yield return man;

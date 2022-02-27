@@ -14,10 +14,7 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
         public bool Active { get; private set; }
 
-        public Color Color => this.Active ? defaultColor : undressColor;
-
-        static Color defaultColor = Color.white;
-        static Color undressColor = Color.gray;
+        public Color Color => Color.white;
     
         List<string> costumes;
         PartsData partsData;
