@@ -107,17 +107,14 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
         protected virtual void SetMaidMask(bool is_mask_on)
         {
-            EnsureCrcChecked();
-            if (!maid.IsCrcBody || crcSetMaskMethod == null)
+            foreach (TBody.SlotID f_eSlot in this.partsData.SlotIDlist)
             {
-                foreach (TBody.SlotID f_eSlot in this.partsData.SlotIDlist)
-                {
-                    maid.body0.SetMask(f_eSlot, !is_mask_on);
-                    Log.LogVerbose("Set slot mask {0}: {1}", f_eSlot, !is_mask_on);
-                }
-
+                maid.body0.SetMask(f_eSlot, !is_mask_on);
+                Log.LogVerbose("Set slot mask {0}: {1}", f_eSlot, !is_mask_on);
             }
-            else
+
+            EnsureCrcChecked();
+            if (crcSetMaskMethod != null)
             {
                 foreach (var mpn in this.partsData.CrcMpnList)
                 {

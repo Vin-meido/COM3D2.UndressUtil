@@ -144,7 +144,14 @@ namespace COM3D2.UndressUtil.Plugin
 
 			if (forceUpdate || !maidHalfUndressItemLookup.ContainsKey(maid))
             {
-				this.maidHalfUndressItemLookup[maid] = UndressItem.HalfUndressItem.ForMaid(maid, this.data);
+				if(!maid.IsCrcBody)
+                {
+					this.maidHalfUndressItemLookup[maid] = UndressItem.HalfUndressItem.ForMaid(maid, this.data);
+				} else
+                {
+					this.maidHalfUndressItemLookup[maid] = CostumeItem.ForMaid(maid, this.data);
+				}
+				
 			}
 		}
 
@@ -154,6 +161,7 @@ namespace COM3D2.UndressUtil.Plugin
 			this.button.isEnabled = false;
 			this.button.defaultColor = this.defaultColor;
 			this.gameObject.SetActive(false);
+			undressWindowManager.RepositionItemGrid();
 		}
 
 		public virtual void UpdateState(Maid maid)

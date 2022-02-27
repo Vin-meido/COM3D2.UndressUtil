@@ -93,6 +93,7 @@
     <Compile Include="MaidIcon.cs" />
     <Compile Include="UIHelper\Button.cs" />
     <Compile Include="UIHelper\UIUtils.cs" />
+    <Compile Include="UndressItem\CostumeItem.cs" />
     <Compile Include="UndressItem\CRCUndressItem.cs" />
     <Compile Include="UndressItem\HalfUndressItem.cs" />
     <Compile Include="UndressItem\IUndressItem.cs" />
