@@ -47,14 +47,32 @@ namespace COM3D2.UndressUtil.Plugin
         public void Refresh()
         {
             maidOldStatus.Clear();
-            var total_maids = GameMain.Instance.CharacterMgr.GetMaidCount();
 
+            foreach (var maid in GetUndressTargets())
+            {
+                this.ActivateMaid(maid);
+            }
+        }
+
+        public IEnumerable<Maid> GetUndressTargets()
+        {
+            var total_maids = GameMain.Instance.CharacterMgr.GetMaidCount();
             for (var i = 0; i < total_maids; i++)
             {
                 var maid = GameMain.Instance.CharacterMgr.GetMaid(i);
                 if (maid != null && maid.isActiveAndEnabled)
                 {
-                    this.ActivateMaid(maid);
+                    yield return maid;
+                }
+            }
+
+            var total_man = GameMain.Instance.CharacterMgr.GetManCount();
+            for (var i = 0; i < total_man; i++)
+            {
+                var man = GameMain.Instance.CharacterMgr.GetMan(i);
+                if (man != null && man.IsCrcBody && man.isActiveAndEnabled)
+                {
+                    yield return man;
                 }
             }
         }
@@ -93,31 +111,26 @@ namespace COM3D2.UndressUtil.Plugin
                 var total_maids = GameMain.Instance.CharacterMgr.GetMaidCount();
                 var checkedMaids = new List<Maid>();
 
-                for (var i=0; i<total_maids; i++)
+                foreach (var maid in GetUndressTargets())
                 {
-                    var maid = GameMain.Instance.CharacterMgr.GetMaid(i);
-                    if(maid != null)
+                    var enabled = maid.isActiveAndEnabled;
+                    var oldStatus = maidOldStatus.ContainsKey(maid) ? maidOldStatus[maid] : false;
+
+                    maidOldStatus[maid] = enabled;
+
+                    if (enabled != oldStatus)
                     {
-                        var enabled = maid.isActiveAndEnabled;
-                        var oldStatus = maidOldStatus.ContainsKey(maid) ? maidOldStatus[maid] : false;
-
-                        maidOldStatus[maid] = enabled;
-
-                        if (enabled != oldStatus)
+                        if (enabled)
                         {
-                            if (enabled)
-                            {
-                                ActivateMaid(maid);
-                            }
-                            else
-                            {
-                                DeactivateMaid(maid);
-                            }
+                            ActivateMaid(maid);
                         }
-
-                        checkedMaids.Add(maid);
+                        else
+                        {
+                            DeactivateMaid(maid);
+                        }
                     }
 
+                    checkedMaids.Add(maid);
                 }
 
                 IEnumerable<Maid> uncheckedMaids = maidOldStatus

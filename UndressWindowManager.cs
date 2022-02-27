@@ -118,6 +118,11 @@ namespace COM3D2.UndressUtil.Plugin
             Destroy(this.gameObject);
         }
 
+        public void RepositionItemGrid()
+        {
+            this.itemGrid.GetComponent<UIGrid>().Reposition();
+        }
+
         private void SetupComponents()
         {
             // make window draggable

@@ -29,6 +29,11 @@ namespace COM3D2.UndressUtil.Plugin
             Logger.LogInfo(string.Format(message, args));
         }
 
+        internal static void LogWarning(string message, params object[] args)
+        {
+            Logger.LogWarning(string.Format(message, args));
+        }
+
         internal static void LogError(string message, params object[] args)
         {
             Logger.LogError(string.Format(message, args));

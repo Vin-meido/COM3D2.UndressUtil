@@ -22,6 +22,67 @@ namespace COM3D2.UndressUtil.Plugin
 		public PartsDB()
         {
 			KasaiUtility.CsvRead("csv_rhythm_action/undress_parts_data.nei", this.ReadPartsData, 0, 1, null);
+			AddCrcManParts();
+		}
+
+		void AddCrcManParts()
+        {
+			var defaultIcon = ImportCM.CreateTexture("customview_icon_tops.tex");
+			if(Product.isCREditSystemSupport)
+            {
+				AddCrcManMpnPart("jacket");
+				AddCrcManMpnPart("vest");
+				AddCrcManMpnPart("shirt");
+			}
+		}
+
+
+		void AddCrcManMpnPart(string part)
+        {
+			var mpn = GetMPNFromString(part);
+			var slot = GetSlotIDFromString(part);
+
+			if(mpn != null && slot != null)
+            {
+				mpnPartsData[(MPN)mpn] = GetCustomPartDataFor((MPN)mpn, (TBody.SlotID)slot);
+            }
+
+        }
+
+		static PartsData GetCustomPartDataFor(MPN mpn, TBody.SlotID slot)
+        {
+			return new PartsData()
+			{
+				mpn = mpn,
+				DefaultIcon = ImportCM.CreateTexture("customview_icon_tops.tex"),
+				SlotIDlist = new List<TBody.SlotID>() { slot },
+				CrcMpnList = new List<MPN>() { mpn }
+			};
+		}
+
+		static MPN? GetMPNFromString(string str)
+        {
+			try
+            {
+				return (MPN)Enum.Parse(typeof(MPN), str);
+			}
+			catch (ArgumentException e)
+            {
+				return null;
+            }
+        }
+
+		static TBody.SlotID? GetSlotIDFromString(string str)
+        {
+			try
+			{
+				return (TBody.SlotID)Enum.Parse(typeof(TBody.SlotID), str);
+			}
+			catch (ArgumentException e)
+			{
+				return null;
+			}
+
 		}
 
 		public IEnumerable<PartsData> GetPartsData()
@@ -75,7 +136,7 @@ namespace COM3D2.UndressUtil.Plugin
 						}
 						break;
 					}
-				case 5:
+				case 6:
 					foreach (string value2 in csv.GetCellAsString(cx, cy).Split(new char[]
 					{
 				','

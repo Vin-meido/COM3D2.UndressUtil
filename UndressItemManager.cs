@@ -153,6 +153,7 @@ namespace COM3D2.UndressUtil.Plugin
 			this.icon.mainTexture = this.data.DefaultIcon;
 			this.button.isEnabled = false;
 			this.button.defaultColor = this.defaultColor;
+			this.gameObject.SetActive(false);
 		}
 
 		public virtual void UpdateState(Maid maid)
@@ -165,6 +166,7 @@ namespace COM3D2.UndressUtil.Plugin
 
 			AddMaidData(maid);
 			UpdateState();
+			undressWindowManager.RepositionItemGrid();
 		}
 
 		public virtual void UpdateState()
@@ -176,6 +178,7 @@ namespace COM3D2.UndressUtil.Plugin
 				this.button.defaultColor = item.Color;
 				this.button.isEnabled = true;
 				this.button.UpdateColor(false);
+				this.gameObject.SetActive(true);
 			}
 			else
 			{

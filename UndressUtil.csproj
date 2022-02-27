@@ -117,7 +117,8 @@ mkdir BepinEx\Plugins
 copy $(TargetPath) BepinEx\plugins
 tar -cvaf $(TargetName).zip BepinEx
 explorer.exe .
-copy $(TargetPath) F:\COM-3d2\BepinEx\plugins</PostBuildEvent>
+copy $(TargetPath) F:\COM-3d2\BepinEx\plugins
+copy $(TargetPath) F:\COM3D2JP\COM3D2_5\BepinEx\plugins</PostBuildEvent>
   </PropertyGroup>
   <Import Project="packages\BepInEx.Core.5.4.16\build\BepInEx.Core.targets" Condition="Exists('packages\BepInEx.Core.5.4.16\build\BepInEx.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using HarmonyLib;
 
 namespace COM3D2.UndressUtil.Plugin.UndressItem
 {
@@ -16,9 +18,32 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
         static Color defaultColor = Color.white;
         static Color undressColor = Color.gray;
+        static MethodInfo crcSetMaskMethod;
+        static bool isCrcChecked = false;
         
         Maid maid;
         PartsData partsData;
+
+        public static void EnsureCrcChecked()
+        {
+            if(!isCrcChecked)
+            {
+                isCrcChecked = true;
+                
+                if (Product.isCREditSystemSupport)
+                {
+                    crcSetMaskMethod = AccessTools.Method(typeof(TBody), "SetMask", new Type[] { typeof(MPN), typeof(bool) });
+                    if (crcSetMaskMethod == null)
+                    {
+                        Log.LogError("CRC SetMask not found, if you are using COM3D2.5, then this is not normal.");
+                    }
+                    else
+                    {
+                        Log.LogInfo("CRC SetMask found");
+                    }
+                }
+            }
+        }
 
         public void Dress()
         {
@@ -58,6 +83,7 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
             if (string.IsNullOrEmpty(filename) || filename.IndexOf("_del") >= 1)
             {
+                Log.LogVerbose("Skip item {0} {1} [{2}]", maid, part.mpn, filename);
                 return null;
             }
 
@@ -81,10 +107,25 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
         protected virtual void SetMaidMask(bool is_mask_on)
         {
-            foreach (TBody.SlotID f_eSlot in this.partsData.SlotIDlist)
+            EnsureCrcChecked();
+            if (!maid.IsCrcBody || crcSetMaskMethod == null)
             {
-                maid.body0.SetMask(f_eSlot, !is_mask_on);
+                foreach (TBody.SlotID f_eSlot in this.partsData.SlotIDlist)
+                {
+                    maid.body0.SetMask(f_eSlot, !is_mask_on);
+                    Log.LogVerbose("Set slot mask {0}: {1}", f_eSlot, !is_mask_on);
+                }
+
             }
+            else
+            {
+                foreach (var mpn in this.partsData.CrcMpnList)
+                {
+                    crcSetMaskMethod.Invoke(maid.body0, new object[] { mpn, !is_mask_on });
+                    Log.LogVerbose("Set crc mpn mask {0}: {1}", mpn, !is_mask_on);
+                }
+            }
+
         }
 
     }
