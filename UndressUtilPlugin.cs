@@ -113,6 +113,8 @@ namespace COM3D2.UndressUtil.Plugin
             (int)SceneTypeEnum.SceneRecollection,
             (int)SceneTypeEnum.SceneGuestMode,
             (int)SceneTypeEnum.SceneScoutMode,
+            (int)SceneTypeEnum.SceneYotogi,
+            (int)SceneTypeEnum.SceneYotogi_ChuB,
         };
 
         public static UndressUtilPlugin Instance { get; private set; }
