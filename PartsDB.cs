@@ -39,14 +39,13 @@ namespace COM3D2.UndressUtil.Plugin
 
 		void AddCrcManMpnPart(string part)
         {
-			var mpn = GetMPNFromString(part);
-			var slot = GetSlotIDFromString(part);
+			var mpn = EnumParse<MPN>(part, MPN.null_mpn);
+			var slot = EnumParse<TBody.SlotID>(part);
 
-			if(mpn != null && slot != null)
+			if(mpn != MPN.null_mpn)
             {
-				mpnPartsData[(MPN)mpn] = GetCustomPartDataFor((MPN)mpn, (TBody.SlotID)slot);
+				mpnPartsData[mpn] = GetCustomPartDataFor(mpn, slot);
             }
-
         }
 
 		static PartsData GetCustomPartDataFor(MPN mpn, TBody.SlotID slot)
@@ -60,29 +59,22 @@ namespace COM3D2.UndressUtil.Plugin
 			};
 		}
 
-		static MPN? GetMPNFromString(string str)
+
+		static T EnumParse<T>(string value) where T: Enum
         {
-			try
-            {
-				return (MPN)Enum.Parse(typeof(MPN), str);
-			}
-			catch (ArgumentException e)
-            {
-				return null;
-            }
+			return (T)Enum.Parse(typeof(T), value);
         }
 
-		static TBody.SlotID? GetSlotIDFromString(string str)
-        {
+		static T EnumParse<T>(string value, T def) where T : Enum
+		{
 			try
-			{
-				return (TBody.SlotID)Enum.Parse(typeof(TBody.SlotID), str);
+            {
+				return (T)Enum.Parse(typeof(T), value);
 			}
-			catch (ArgumentException e)
-			{
-				return null;
-			}
-
+			catch(ArgumentException)
+            {
+				return def;
+            }
 		}
 
 		public IEnumerable<PartsData> GetPartsData()
@@ -96,7 +88,7 @@ namespace COM3D2.UndressUtil.Plugin
 			{
 				case 0:
 					{
-						MPN key = (MPN)Enum.Parse(typeof(MPN), csv.GetCellAsString(cx, cy));
+						MPN key = EnumParse<MPN>(csv.GetCellAsString(cx, cy));
 						var part = new PartsData();
 						part.mpn = key;
 						this.mpnPartsData.Add(key, part);
@@ -109,7 +101,7 @@ namespace COM3D2.UndressUtil.Plugin
 				','
 					}))
 					{
-						mpnPartsData[lastMPN].SlotIDlist.Add((TBody.SlotID)Enum.Parse(typeof(TBody.SlotID), value));
+						mpnPartsData[lastMPN].SlotIDlist.Add(EnumParse<TBody.SlotID>(value));
 					}
 					break;
 				case 2:
@@ -142,7 +134,7 @@ namespace COM3D2.UndressUtil.Plugin
 				','
 					}))
 					{
-						MPN mpn = (MPN)Enum.Parse(typeof(MPN), value2);
+						MPN mpn = EnumParse(value2, MPN.null_mpn);
 						if (mpn != MPN.null_mpn)
 						{
 							mpnPartsData[lastMPN].CrcMpnList.Add(mpn);
