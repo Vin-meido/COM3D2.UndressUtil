@@ -20,52 +20,20 @@ namespace COM3D2.UndressUtil.Plugin
 		private Dictionary<Maid, IUndressItem>
 			maidHalfUndressItemLookup = new Dictionary<Maid, IUndressItem>();
 
-
 		private Color defaultColor = Color.white;
 
-		private UndressWindowManager undressWindowManager;
-		private MaidSelectPanelManager maidSelectManager;
-		private MaidTracker maidTracker;
+		Maid selectedMaid;
+		UndressWindowManager.UndressMode currentMode;
 
-		public void Awake()
+		void Awake()
         {
 			button = base.GetComponent<UIButton>();
 			icon = base.GetComponent<UITexture>();
 		}
 
-		public void Start()
+		void Start()
         {
-			undressWindowManager = this.gameObject.GetComponentInParent<UndressWindowManager>();
-			Assert.IsNotNull(undressWindowManager.MaidSelectPanelManager, "Could not find MaidSelectManager");
-			maidSelectManager = undressWindowManager.MaidSelectPanelManager;
-			maidSelectManager.MaidSelected.AddListener(this.UpdateState);
-
 			EventDelegate.Add(this.button.onClick, new EventDelegate.Callback(this.Toggle));
-
-			maidTracker = gameObject.GetComponentInParent<MaidTracker>();
-			Assert.IsNotNull(maidTracker, "Could not find MaidTracker");
-			maidTracker.MaidActivated.AddListener(this.AddMaidData);
-			undressWindowManager.UndressModeChangeEvent.AddListener(this.UpdateState);
-
-			// Add maid data only when the scene is fully loaded
-			// Avoids maids not having equiped slots due to early loading
-			StartCoroutine(this.AddMaidDataCoroutine());
-		}
-
-		public void OnDestroy()
-        {
-			maidTracker.MaidActivated.RemoveListener(this.AddMaidData);
-        }
-
-		private IEnumerator AddMaidDataCoroutine()
-		{
-			yield return null;
-			foreach (var maid in maidTracker.GetActiveMaids())
-			{
-				this.AddMaidData(maid);
-			}
-
-			UpdateState(maidSelectManager.SelectedMaid);
 		}
 
 		public bool IsEnable
@@ -82,17 +50,46 @@ namespace COM3D2.UndressUtil.Plugin
 			this.icon.mainTexture = this.data.DefaultIcon;
 		}
 
+		public void SetMaid(Maid maid, UndressWindowManager.UndressMode mode)
+        {
+			selectedMaid = maid;
+			currentMode = mode;
+
+			if (maid != null)
+            {
+				if (mode == UndressWindowManager.UndressMode.NORMAL)
+				{
+					AddMaidUndressData(maid);
+				}
+				else
+				{
+					AddMaidHalfUndressData(maid);
+				}
+			}
+
+			this.UpdateState();
+		}
+
+		public void Reset()
+        {
+			maidUndressItemLookup.Clear();
+			maidHalfUndressItemLookup.Clear();
+			selectedMaid = null;
+			currentMode = UndressWindowManager.UndressMode.NORMAL;
+        }
+
 		public IUndressItem GetUndressItem()
         {
-			var selectMaid = maidSelectManager.SelectedMaid;
+			if (selectedMaid == null) return null;
+
 			var lookup = maidUndressItemLookup;
 
-			if (undressWindowManager.mode == UndressWindowManager.UndressMode.HALFUNDRESS)
+			if (currentMode == UndressWindowManager.UndressMode.HALFUNDRESS)
             {
 				lookup = maidHalfUndressItemLookup;
 			}
 
-			return lookup[selectMaid];
+			return lookup[selectedMaid];
 		}
 
 		public void Dress()
@@ -124,11 +121,6 @@ namespace COM3D2.UndressUtil.Plugin
 				UpdateState();
 			}
 		}
-
-		public void AddMaidData(Maid maid)
-        {
-			this.AddMaidData(maid, false);
-        }
 
 		void AddMaidUndressData(Maid maid)
         {
@@ -163,39 +155,15 @@ namespace COM3D2.UndressUtil.Plugin
 			}
 		}
 
-		public void AddMaidData(Maid maid, bool forceUpdate)
-		{
-			if (!maid)
-			{
-				return;
-			}
-			AddMaidUndressData(maid);
-			AddMaidHalfUndressData(maid);
-		}
-
 		private void SetDisabled()
         {
 			this.icon.mainTexture = this.data.DefaultIcon;
 			this.button.isEnabled = false;
 			this.button.defaultColor = this.defaultColor;
 			this.gameObject.SetActive(false);
-			undressWindowManager.RepositionItemGrid();
 		}
 
-		public virtual void UpdateState(Maid maid)
-		{
-			if (maid == null)
-            {
-				SetDisabled();
-				return;
-			}
-
-			AddMaidData(maid);
-			UpdateState();
-			undressWindowManager.RepositionItemGrid();
-		}
-
-		public virtual void UpdateState()
+		void UpdateState()
         {
 			var item = GetUndressItem();
 			if (item != null && item.Available)

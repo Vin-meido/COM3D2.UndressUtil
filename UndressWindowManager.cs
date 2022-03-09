@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 namespace COM3D2.UndressUtil.Plugin
 {
-    class UndressWindowManager: MonoBehaviour
+    public class UndressWindowManager: MonoBehaviour
     {
         GameObject itemWindow;
         GameObject itemGrid;
@@ -23,26 +23,17 @@ namespace COM3D2.UndressUtil.Plugin
         private Dictionary<Maid, GameObject> maidGameObjectLookup = new Dictionary<Maid, GameObject>();
         public MaidSelectPanelManager MaidSelectPanelManager { get; private set; }
         private MaidTracker maidTracker;
-        private UndressItemManager undressItemManager;
+        private readonly List<UndressItemManager> undressItemManagers = new List<UndressItemManager>();
 
         public readonly UnityEvent UndressModeChangeEvent = new UnityEvent();
 
-        private bool IsAutoShow
-        {
-            get
-            {
-                return UndressUtilPlugin.Instance.Config.autoShowInNonVr.Value || GameMain.Instance.VRMode;
-            }
-        }
+        public static UndressWindowManager Instance { get; private set; }
 
-        private bool IsAutoHide
-        {
-            get
-            {
-                return UndressUtilPlugin.Instance.Config.autoHide.Value;
-            }
-        }
+        private bool IsAutoShow => UndressUtilPlugin.Instance.Config.autoShowInNonVr.Value || GameMain.Instance.VRMode;
 
+        private bool IsAutoHide => UndressUtilPlugin.Instance.Config.autoHide.Value;
+
+        private bool IsInSupportedLevel => UndressUtilPlugin.Instance.IsInSupportedLevel;
 
         public enum UndressMode
         {
@@ -52,6 +43,14 @@ namespace COM3D2.UndressUtil.Plugin
 
         public void Awake()
         {
+            if (Instance != null)
+            {
+                throw new Exception("Already initialized");
+            }
+
+            Instance = this;
+            DontDestroyOnLoad(this);
+
             Log.LogVerbose("UndressWindowManager.Awake");
 
             this.itemWindow = this.gameObject.transform.Find("ItemWindow").gameObject;
@@ -92,30 +91,25 @@ namespace COM3D2.UndressUtil.Plugin
             this.maidTracker.MaidDeactivated.AddListener(this.MaidInactive);
             this.maidTracker.MaidPropUpdated.AddListener(this.MaidPropUpdate);
 
-
-            if(this.maidTracker.GetActiveMaids().Count() > 0)
-            {
-                this.ShowWindow(true);
-            }
-
+            SceneManager.sceneLoaded += this.OnSceneLoaded;
             SceneManager.sceneUnloaded += this.OnSceneUnloaded;
         }
 
-        public void OnEnable()
+        void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             StartCoroutine(this.KeyboardCheckCoroutine());
+
+            if (IsAutoShow && IsInSupportedLevel && !visible)
+            {
+                DelayedShowWindow();
+            }
         }
 
-
-        public void OnDestroy()
+        void OnSceneUnloaded(Scene scene)
         {
-            Log.LogVerbose("UndressWindowManager.OnDestroy [{0}]", this.GetInstanceID());
-            SceneManager.sceneUnloaded -= this.OnSceneUnloaded;
-        }
-
-        public void OnSceneUnloaded(Scene sceen)
-        {
-            Destroy(this.gameObject);
+            StopAllCoroutines();
+            this.DoHideWindow(true);
+            ResetItemManagers();
         }
 
         public void RepositionItemGrid()
@@ -144,9 +138,9 @@ namespace COM3D2.UndressUtil.Plugin
             {
                 var gameObject = Prefabs.CreateItemIcon(this.itemGrid);
                 gameObject.name = String.Format("ItemIcon_{0}", data.mpn);
-                gameObject
-                    .GetComponent<UndressItemManager>()
-                    .Init(data.mpn, data);
+                var manager = gameObject.GetComponent<UndressItemManager>();
+                manager.Init(data.mpn, data);
+                undressItemManagers.Add(manager);
             }
 
             this.itemGrid.GetComponent<UIGrid>().Reposition();
@@ -179,6 +173,7 @@ namespace COM3D2.UndressUtil.Plugin
         private void SetupMaidIconList()
         {
             MaidSelectPanelManager = this.maidGrid.AddComponent<MaidSelectPanelManager>();
+            MaidSelectPanelManager.MaidSelected.AddListener(this.MaidSelected);
         }
 
         public void HideWindow()
@@ -188,6 +183,11 @@ namespace COM3D2.UndressUtil.Plugin
 
         public void DoHideWindow(bool immediate = false)
         {
+            if (currentDelayedShow != null)
+            {
+                StopCoroutine(currentDelayedShow);
+            }
+
             if (this.visible)
             {
                 var duration = immediate ? 0f : 0.5f;
@@ -196,10 +196,29 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
+        Coroutine currentDelayedShow;
+
+        public void DelayedShowWindow()
+        {
+            currentDelayedShow = StartCoroutine(DelayedShowWindowCoroutine());
+        }
+
+        IEnumerator DelayedShowWindowCoroutine()
+        {
+            Log.LogVerbose("Delayed show wait");
+            yield return new WaitForSeconds(1);
+            if (!visible && this.maidTracker.GetActiveMaids().Count() > 0)
+            {
+                Log.LogVerbose("Delayed show start");
+                this.ShowWindow();
+            }
+        }
+
         public void ShowWindow(bool immediate = false)
         {
             if (!this.visible)
             {
+                this.Refresh();
                 var duration = immediate ? 0f : 0.5f;
                 TweenAlpha.Begin(this.gameObject, duration, 1);
                 this.visible = true;
@@ -208,7 +227,7 @@ namespace COM3D2.UndressUtil.Plugin
 
         public void AllUndress()
         {
-            foreach (UndressItemManager undressItem in this.gameObject.GetComponentsInChildren<UndressItemManager>())
+            foreach (var undressItem in undressItemManagers)
             {
                 undressItem.Undress();
             }
@@ -216,7 +235,7 @@ namespace COM3D2.UndressUtil.Plugin
 
         public void AllDress()
         {
-            foreach (UndressItemManager undressItem in this.gameObject.GetComponentsInChildren<UndressItemManager>())
+            foreach (var undressItem in undressItemManagers)
             {
                 undressItem.Dress();
             }
@@ -230,20 +249,12 @@ namespace COM3D2.UndressUtil.Plugin
             uiBtn.defaultColor = this.mode == UndressMode.HALFUNDRESS ? Color.white : Color.gray;
             uiBtn.UpdateColor(false);
 
-            this.UndressModeChangeEvent.Invoke();
+            this.Refresh();
         }
 
         public void Refresh()
         {
-            maidTracker.Refresh();
-            foreach (var maid in maidTracker.GetActiveMaids())
-            {
-                foreach (UndressItemManager undressItem in this.gameObject.GetComponentsInChildren<UndressItemManager>())
-                {
-                    undressItem.AddMaidData(maid, true);
-                    undressItem.UpdateState();
-                }
-            }
+            UpdateItemManagers(MaidSelectPanelManager.SelectedMaid);
         }
 
         private IEnumerator KeyboardCheckCoroutine()
@@ -266,11 +277,31 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
+        private void UpdateItemManagers(Maid maid)
+        {
+            foreach (var manager in undressItemManagers)
+            {
+                manager.SetMaid(maid, mode);
+            }
+
+            RepositionItemGrid();
+        }
+
+        private void ResetItemManagers()
+        {
+            foreach (var manager in undressItemManagers)
+            {
+                manager.Reset();
+            }
+
+            RepositionItemGrid();
+        }
+
         private void MaidActive(Maid maid)
         {
-            if (this.IsAutoShow && !this.visible && this.maidTracker.GetActiveMaids().Count() > 0)
+            if (this.IsAutoShow && this.IsInSupportedLevel && !this.visible)
             {
-                this.ShowWindow();
+                DelayedShowWindow();
             }
         }
 
@@ -282,11 +313,31 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
+        private void MaidSelected(Maid maid)
+        {
+            if(visible)
+            {
+                UpdateItemManagers(maid);
+            }
+        }
+
         private bool maidPropUpdateTriggered = false;
         private bool maidPropUpdateCoroutineStarted = false;
 
         private void MaidPropUpdate(Maid maid)
         {
+            if (!visible)
+            {
+                Log.LogVerbose("Skipping maid prop update because undress window is hidden");
+                return;
+            }
+
+            if(maid != MaidSelectPanelManager.SelectedMaid)
+            {
+                Log.LogVerbose("Skipping maid prop update because it is not the selected maid");
+                return;
+            }
+
             if (!maidPropUpdateTriggered)
             {
                 maidPropUpdateTriggered = true;

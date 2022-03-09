@@ -76,19 +76,26 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 				return;
             }
 
-			if (string.IsNullOrEmpty(prop.strFileName) || prop.strFileName.IndexOf("_del") >= 1)
+			currentMainPropFilename = prop.strFileName;
+
+			if (string.IsNullOrEmpty(currentMainPropFilename) || currentMainPropFilename.IndexOf("_del") >= 1)
 			{
 				Available = false;
+				Icon = partsData.DefaultIcon;
+				return;
 			}
 
-			var halfUndressProps = GetHalfUndressMenuItems(prop.strFileName);
+			var halfUndressProps = GetHalfUndressMenuItems(currentMainPropFilename);
 			if (halfUndressProps.Count() <= 1)
 			{
 				Available = false;
+				Icon = partsData.DefaultIcon;
+				return;
 			}
 
 			Available = true;
-			Icon = UndressItem.GetIcon(prop.strFileName);
+			Icon = UndressItem.GetIcon(currentMainPropFilename);
+			props = halfUndressProps;
 		}
 
 		private static IEnumerable<string> GetPororiFiles(string basename, string ext)

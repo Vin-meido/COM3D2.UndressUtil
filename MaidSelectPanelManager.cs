@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 namespace COM3D2.UndressUtil.Plugin
 {
-    class MaidSelectPanelManager: MonoBehaviour
+    public class MaidSelectPanelManager: MonoBehaviour
     {
         GameObject maidGrid;
         Dictionary<Maid, GameObject> maidGameObjectLookup = new Dictionary<Maid, GameObject>();

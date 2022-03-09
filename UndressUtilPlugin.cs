@@ -135,7 +135,10 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
-        public void Awake()
+        public bool IsInSupportedLevel => Config.disableSceneRestrictions.Value || EnableScenes.Contains(currentLevel);
+        private int currentLevel;
+
+        void Awake()
         {
             if (UndressUtilPlugin.Instance != null)
             {
@@ -151,53 +154,16 @@ namespace COM3D2.UndressUtil.Plugin
                 BaseKagManagerHooks.Init();
             }
 
+            SceneManager.sceneLoaded += this.OnSceneLoaded;
             Log.LogInfo("Plugin initialized. Version {0}-{1} ({2})", Version.NUMBER, Version.VARIANT, Version.RELEASE_TYPE);
         }
 
-        public void OnEnable()
+        void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            SceneManager.sceneLoaded += this.OnSceneLoaded;
+            currentLevel = scene.buildIndex;
         }
 
-        public void OnDisable()
-        {
-            SceneManager.sceneLoaded -= this.OnSceneLoaded;
-        }
-
-        public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            this.StopAllCoroutines();
-            this.StartCoroutine(this.OnLevelLoadedCoroutine(scene.buildIndex));
-        }
-
-        public IEnumerator OnLevelLoadedCoroutine(int level)
-        {
-
-            if (Config.disableSceneRestrictions.Value || EnableScenes.Contains(level))
-            {
-                Log.LogInfo("UndressWindow shortcut is [{0}]", Config.showShortcut.Value);
-
-                if (this.IsAutoShow)
-                {
-                    yield return new WaitForSeconds(1);
-                }
-                else
-                {
-                    Log.LogInfo("Waiting for UndressWindow shortcut");
-                    yield return new WaitUntil(Config.showShortcut.Value.IsDown);
-                }
-
-                Log.LogInfo("Setting up UndressWindow");
-                SetupWindow();
-            }
-            else
-            {
-                Log.LogInfo("Current level [{0}] is not supported", level);
-            }
-
-        }
-
-        public void SetupWindow()
+        void Start()
         {
             GameObject uiroot = GameObject.Find("SystemUI Root");
             Assert.IsNotNull(uiroot, "Could not find SystemUI Root");
