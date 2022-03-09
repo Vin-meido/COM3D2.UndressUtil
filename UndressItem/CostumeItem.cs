@@ -14,8 +14,11 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
         public bool Active { get; private set; }
 
+        public bool Available { get; private set; }
+
         public Color Color => Color.white;
-    
+
+
         List<string> costumes;
         PartsData partsData;
         Maid maid;
@@ -91,12 +94,24 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
                     costumes = costumes,
                     Icon = null,
                     Active = false,
+                    Available = true,
                 };
 
             }
 
-            return null;
+            return new CostumeItem()
+            {
+                maid = maid,
+                partsData = part,
+                Active = false,
+                Available = false,
+            };
         }
 
+        public void Update()
+        {
+            // costumes shouldnt change, for the most part i think?
+            return;
+        }
     }
 }

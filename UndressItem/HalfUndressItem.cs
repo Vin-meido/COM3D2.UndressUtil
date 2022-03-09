@@ -12,6 +12,7 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 		public Texture Icon { get; private set; }
 
         public bool Active => true;
+		public bool Available { get; private set; }
 
         public Color Color => Color.white;
 
@@ -19,6 +20,8 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 		PartsData partsData;
 		int currentPropIndex = 0;
 		IList<string> props;
+		string currentMainPropFilename;
+
 
 		public void Dress()
         {
@@ -55,26 +58,38 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
 		public static IUndressItem ForMaid(Maid maid, PartsData part)
         {
-			MaidProp prop = maid.GetProp(part.mpn);
+			var item = new HalfUndressItem()
+			{
+				maid = maid,
+				partsData = part,
+			};
+
+			item.Update();
+			return item;
+        }
+
+		public void Update()
+        {
+			MaidProp prop = maid.GetProp(partsData.mpn);
+
+			if(currentMainPropFilename == prop.strFileName) { 
+				return;
+            }
+
 			if (string.IsNullOrEmpty(prop.strFileName) || prop.strFileName.IndexOf("_del") >= 1)
 			{
-				return null;
+				Available = false;
 			}
 
 			var halfUndressProps = GetHalfUndressMenuItems(prop.strFileName);
 			if (halfUndressProps.Count() <= 1)
-            {
-				return null;
-            } 
-
-			return new HalfUndressItem()
 			{
-				maid = maid,
-				partsData = part,
-				Icon = UndressItem.GetIcon(prop.strFileName),
-				props = halfUndressProps
-			};
-        }
+				Available = false;
+			}
+
+			Available = true;
+			Icon = UndressItem.GetIcon(prop.strFileName);
+		}
 
 		private static IEnumerable<string> GetPororiFiles(string basename, string ext)
 		{

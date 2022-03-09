@@ -13,6 +13,7 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
         public Texture Icon { get; private set;  }
 
         public bool Active { get; private set; }
+        public bool Available { get; private set; }
 
         public Color Color => this.Active ? defaultColor : undressColor;
 
@@ -21,6 +22,7 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
         static MethodInfo crcSetMaskMethod;
         static bool isCrcChecked = false;
         
+        string currentPropFilename;
         Maid maid;
         PartsData partsData;
 
@@ -74,35 +76,16 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
             SceneEdit.InitMenuItemScript(smenuItem, filename, false);
             return smenuItem.m_texIconRef;
         }
-
         public static IUndressItem ForMaid(Maid maid, PartsData part)
         {
-            MaidProp prop = maid.GetProp(part.mpn);
 
-            var filename = string.IsNullOrEmpty(prop.strTempFileName) ? prop.strFileName : prop.strTempFileName;
-
-            if (string.IsNullOrEmpty(filename) || filename.IndexOf("_del") >= 1)
-            {
-                Log.LogVerbose("Skip item {0} {1} [{2}]", maid, part.mpn, filename);
-                return null;
-            }
-
-            Log.LogVerbose("Undress item {0} {1} [{2}]", maid, part.mpn, filename);
-
-            bool isActive = false;
-            foreach (TBody.SlotID f_eSlot in part.SlotIDlist)
-            {
-                isActive = maid.body0.GetMask(f_eSlot);
-                if (isActive) break;
-            }
-
-            return new UndressItem()
+            var item = new UndressItem()
             {
                 maid = maid,
                 partsData = part,
-                Icon = GetIcon(filename),
-                Active = isActive,
             };
+            item.Update();
+            return item;
         }
 
         protected virtual void SetMaidMask(bool is_mask_on)
@@ -125,5 +108,43 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
         }
 
+        public virtual void Update()
+        {
+            MaidProp prop = maid.GetProp(partsData.mpn);
+
+            //var current = string.IsNullOrEmpty(currentProp.strTempFileName) ? currentProp.strFileName : currentProp.strTempFileName;
+            var filename = string.IsNullOrEmpty(prop.strTempFileName) ? prop.strFileName : prop.strTempFileName;
+
+            if (filename == currentPropFilename)
+            {
+                Log.LogVerbose("Item unchanged {0} {1} [{2}]", maid, partsData.mpn, filename);
+                return;
+            }
+
+            currentPropFilename = filename;
+
+            if (string.IsNullOrEmpty(filename) || filename.IndexOf("_del") >= 1)
+            {
+                Log.LogVerbose("Skip item {0} {1} [{2}]", maid, partsData.mpn, filename);
+                Active = false;
+                Available = false;
+                Icon = partsData.DefaultIcon;
+            }
+            else
+            {
+                Log.LogVerbose("Undress item {0} {1} [{2}]", maid, partsData.mpn, filename);
+
+                bool isActive = false;
+                foreach (TBody.SlotID f_eSlot in partsData.SlotIDlist)
+                {
+                    isActive = maid.body0.GetMask(f_eSlot);
+                    if (isActive) break;
+                }
+
+                Active = isActive;
+                Available = true;
+                Icon = GetIcon(filename);
+            }
+        }
     }
 }

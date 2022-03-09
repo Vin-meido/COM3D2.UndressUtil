@@ -130,29 +130,47 @@ namespace COM3D2.UndressUtil.Plugin
 			this.AddMaidData(maid, false);
         }
 
+		void AddMaidUndressData(Maid maid)
+        {
+			if (!maidUndressItemLookup.ContainsKey(maid))
+			{
+				this.maidUndressItemLookup[maid] = UndressItem.UndressItem.ForMaid(maid, this.data);
+			}
+			else
+			{
+				this.maidUndressItemLookup[maid].Update();
+			}
+
+		}
+
+		void AddMaidHalfUndressData(Maid maid)
+        {
+			if (!maidHalfUndressItemLookup.ContainsKey(maid))
+			{
+				if (!maid.IsCrcBody)
+				{
+					this.maidHalfUndressItemLookup[maid] = UndressItem.HalfUndressItem.ForMaid(maid, this.data);
+				}
+				else
+				{
+					this.maidHalfUndressItemLookup[maid] = CostumeItem.ForMaid(maid, this.data);
+				}
+
+			}
+			else
+			{
+				this.maidHalfUndressItemLookup[maid].Update();
+			}
+		}
+
 		public void AddMaidData(Maid maid, bool forceUpdate)
 		{
 			if (!maid)
 			{
 				return;
 			}
-
-			if (forceUpdate || !maidUndressItemLookup.ContainsKey(maid))
-            {
-				this.maidUndressItemLookup[maid] = UndressItem.UndressItem.ForMaid(maid, this.data);
-			}
-
-			if (forceUpdate || !maidHalfUndressItemLookup.ContainsKey(maid))
-            {
-				if(!maid.IsCrcBody)
-                {
-					this.maidHalfUndressItemLookup[maid] = UndressItem.HalfUndressItem.ForMaid(maid, this.data);
-				} else
-                {
-					this.maidHalfUndressItemLookup[maid] = CostumeItem.ForMaid(maid, this.data);
-				}
-				
-			}
+			AddMaidUndressData(maid);
+			AddMaidHalfUndressData(maid);
 		}
 
 		private void SetDisabled()
@@ -180,7 +198,7 @@ namespace COM3D2.UndressUtil.Plugin
 		public virtual void UpdateState()
         {
 			var item = GetUndressItem();
-			if (item != null)
+			if (item != null && item.Available)
 			{
 				this.icon.mainTexture = item.Icon ?? this.data.DefaultIcon;
 				this.button.defaultColor = item.Color;

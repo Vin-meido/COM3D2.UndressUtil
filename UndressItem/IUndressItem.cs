@@ -10,9 +10,11 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
     {
         Texture Icon { get;  }
         bool Active { get; }
+        bool Available { get; }
         Color Color { get; }
         void Dress();
         void Undress();
         void Toggle();
+        void Update();
     }
 }
