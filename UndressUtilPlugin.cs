@@ -6,8 +6,7 @@ using UnityEngine.SceneManagement;
 using BepInEx;
 using BepInEx.Logging;
 
-using COM3D2.UndressUtil.Plugin.Hooks;
-
+using COM3D2API;
 
 namespace COM3D2.UndressUtil.Plugin
 {
@@ -25,6 +24,7 @@ namespace COM3D2.UndressUtil.Plugin
     }
 
     [BepInPlugin("org.bepinex.plugins.com3d2.undressutil", "UndressUtil", Version.NUMBER)]
+    [BepInDependency("deathweasel.com3d2.api")]
     public class UndressUtilPlugin: BaseUnityPlugin
     {
         private enum SceneTypeEnum
@@ -183,13 +183,26 @@ namespace COM3D2.UndressUtil.Plugin
             GameObject uiroot = GameObject.Find("SystemUI Root");
             Assert.IsNotNull(uiroot, "Could not find SystemUI Root");
             var obj = Prefabs.CreateUndressWindow(uiroot);
+            var manager = obj.GetComponent<UndressWindowManager>();
 
-            if (!this.IsAutoShow)
+            SystemShortcutAPI.AddButton(
+                "Undress utility", 
+                manager.ToggleWindow,
+                "Undress utility",
+                GetIcon());
+        }
+
+        byte[] GetIcon()
+        {
+            var assembly = GetType().Assembly;
+            using (var stream = assembly.GetManifestResourceStream("COM3D2.UndressUtil.Plugin.Icon.png"))
             {
-                // means this was triggered via hotkey, show window immediately
-                var manager = obj.GetComponent<UndressWindowManager>();
-                manager.ShowWindow();
+                var buffer = new byte[stream.Length];
+                stream.Read(buffer, 0, (int)stream.Length);
+                return buffer;
             }
         }
+
+
     }
 }

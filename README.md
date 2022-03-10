@@ -13,11 +13,16 @@ This plugin works with all versions of COM3D2:
 - JP 2.13 or newer
 - COM3D2.5 3.13 X0 or newer
 
+
 ## Known issues
 
 (EN and JP COM3D2 only) Minor stuttering may occur when switching into Half Undress mode for the first time in a scene. Subsequent switching in and out of the mode should be fine however. This will be further optimized in a later update.
 
-(All game versions) When disabling Auto show in VR, there is currently no way to show the undress window in VR other than the keyboard shortcut. An alternate way that does not rely on keyboard shortcuts will be implemented in the future.
+
+## Requirements
+
+This plugin requires COM3D2API. If you use CMI, then this plugin should be included in your install already. If not, you can get it from (https://github.com/DeathWeasel1337/COM3D2_Plugins).
+
 
 ## Installation
 

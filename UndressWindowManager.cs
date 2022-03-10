@@ -231,6 +231,18 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
+        public void ToggleWindow()
+        {
+            if (this.visible)
+            {
+                this.HideWindow();
+            }
+            else
+            {
+                this.ShowWindow();
+            }
+        }
+
         public void AllUndress()
         {
             foreach (var undressItem in undressItemManagers)
@@ -272,13 +284,7 @@ namespace COM3D2.UndressUtil.Plugin
 
                 if (shortcut.IsDown())
                 {
-                    if (this.visible)
-                    {
-                        this.HideWindow();
-                    } else
-                    {
-                        this.ShowWindow();
-                    }
+                    ToggleWindow();
                 }
             }
         }
