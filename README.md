@@ -44,8 +44,6 @@ These settings can be changed via Configuration Manager (comes with COM Modular 
 
 - Shortcut: shortcut key to use to show the undress window manually (unset by default)
 
-- Auto show in all scenes: Automatically shows the undress window on any scene (including yotogi)
-
 - Verbose log: enable verbose logging in BepInEx console. Enable only when you want to report a problem.
 
 **Scene settings**
