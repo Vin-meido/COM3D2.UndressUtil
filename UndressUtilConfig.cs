@@ -43,13 +43,13 @@ namespace COM3D2.UndressUtil.Plugin
                 "Automatically hide window when no maids are active.");
 
             autoShowInYotogi = conf.Bind(
-                "General",
+                "Scene settings",
                 "Auto show in yotogi",
                 false,
                 "Automatically show undress window in yotogi scenes.");
 
             autoShowInAllScenes = conf.Bind(
-                "General",
+                "Scene settings",
                 "Auto show in all scenes",
                 false,
                 "Automatically show in all scenes.");

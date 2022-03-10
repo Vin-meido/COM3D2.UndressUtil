@@ -9,52 +9,49 @@ Uses COM3D2's UI system so the plugin can be used in VR mode (unlike other plugi
 
 This plugin works with all versions of COM3D2:
 
-- EN 1.13
-- JP 2.13
-- COM3D2.5 3.13 X0
+- EN 1.13 or newer
+- JP 2.13 or newer
+- COM3D2.5 3.13 X0 or newer
+
+## Known issues
+
+(EN and JP COM3D2 only) Minor stuttering may occur when switching into Half Undress mode for the first time in a scene. Subsequent switching in and out of the mode should be fine however. This will be further optimized in a later update.
+
+(All game versions) When disabling Auto show in VR, there is currently no way to show the undress window in VR other than the keyboard shortcut. An alternate way that does not rely on keyboard shortcuts will be implemented in the future.
 
 ## Installation
 
+**Important**: UndressUtil is now available via CMI (https://github.com/krypto5863/COM-Modular-Installer). Use the CMI installer to add the plugin into your game. However, if you wish to update manually, or if you are not using CMI to manage your plugins, you can do the following:
+
 1. Make sure you have your game updated to latest version
 
-2. If you havent yet, get and install COM Moduler Installer (https://github.com/krypto5863/COM-Modular-Installer).
+2. Copy COM3D2.UndressUtil.dll in BepInEx/plugins folder of your COM3D2 installation
 
-3. Copy COM3D2.UndressUtil.dll in BepInEx/plugins folder of your COM3D2 installation
-
-4. Run the game. Once in the game, hit `F1` to configure shortcut (when using in non VR)
+3. Run the game. Once in the game, hit `F1` to configure shortcut (when using in non VR)
 
 
 ## Configuration
 
 These settings can be changed via Configuration Manager (comes with COM Modular Installer):
 
+**General**
+
+- Auto show in VR: Automatically show the undress window when a maid is present even when in VR.
+
+- Auto show outside VR: Automatically show the undress window when a maid is present even when not in VR.
+
 - Auto hide: Automatically hides the undress window when there are no visible maids in the scene
 
-- Auto show outside VR: Automatically show the undress window when a maid is present even when not in VR. (The window is shown automatically when in VR mode).
+- Shortcut: shortcut key to use to show the undress window manually (unset by default)
 
-- Disable scene restrictions: Remove restrictions on which scene types the undress window can be shown for.
-
-- Shortcut: shortcut key to use to show the undress window manually
+- Auto show in all scenes: Automatically shows the undress window on any scene (including yotogi)
 
 - Verbose log: enable verbose logging in BepInEx console. Enable only when you want to report a problem.
 
+**Scene settings**
 
+By default, if Auto show is enabled for the particular mode (VR or non-VR), the undress window would only be displayed in ADV, Recollection, Guest, and Scout scenes. You can enable the following additional settings to alter this behaviour:
 
-## Build from source
+- Auto show in all scenes: Show in all scenes (disabled by default). Note that this may conflict with undressing functions native to that scene (e.g. Dance mode and/or Maid Edit mode)
 
-You shouldnt need to, unless you want to modify the functionality. If you do, clone this git repository then copy the following dll files from your COM3D2 game into the libs directory:
-
-From BepInEx\Core:
-- 0Harmony.dll
-- BepInEx.dll
-
-From COM3D2x64_Data\Managed:
-- Assembly-CSharp.dll
-- Assembly-CSharp-firstpass.dll
-- UnityEngine.dll
-
-Install VS Studio community. See the general programming resources in the Custom Maid Server on how to install and which packages to include.
-
-If you are using the EN version of the game to compile, select "en_jp-2.0" build configuration (as the en version dlls do not contain some of functions.) Though dlls compiled against the jp version should work with en version of the game.
-
-Open the sln file, and build!
+- Auto show in yotogi: Show in yotogi scenes (disabled by default). Yotogi scenes normally have their own undressing panel. However the undress window can give you finer control, support half undress, and as well as undress the master (for COM3D2.5 X0)
