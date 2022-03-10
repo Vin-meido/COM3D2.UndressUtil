@@ -33,15 +33,8 @@ namespace COM3D2.UndressUtil.Plugin
             Log.LogVerbose("MaidTracker.Start [{0}]", this.GetInstanceID());
             this.Refresh();
 
-            BaseKagManagerHooks.Init();
-
-            if (!this.config.useMaidPolling.Value)
-            {
-                BaseKagManagerHooks.MaidActivated.AddListener(this.ActivateMaid);
-                BaseKagManagerHooks.MaidDeactivated.AddListener(this.DeactivateMaid);
-            }
-
-            BaseKagManagerHooks.MaidPropUpdated.AddListener(this.UpdateMaidProp);
+            MaidHooks.Init();
+            MaidHooks.OnMaidPropUpdate.AddListener(this.UpdateMaidProp);
         }
 
         public void Refresh()
@@ -93,23 +86,10 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
-
-        public void OnDestroy()
-        {
-            Log.LogVerbose("MaidTracker.OnDestroy [{0}]", this.GetInstanceID());
-            if (!this.config.useMaidPolling.Value)
-            {
-                CharacterMgrHooks.MaidActivated.RemoveListener(this.ActivateMaid);
-                CharacterMgrHooks.MaidDeactivated.RemoveListener(this.DeactivateMaid);
-            }
-        }
-
         public void OnEnable()
         {
-            if (this.config.useMaidPolling.Value)
-            {
-                StartCoroutine(this.Coroutine());
-            }
+            StopAllCoroutines();
+            StartCoroutine(this.Coroutine());
         }
 
         public IEnumerable<Maid> GetActiveMaids()

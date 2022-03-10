@@ -9,10 +9,11 @@ namespace COM3D2.UndressUtil.Plugin
     public class UndressUtilConfig
     {
         public ConfigEntry<bool> verboseLog;
+        public ConfigEntry<bool> autoShowInVr;
         public ConfigEntry<bool> autoShowInNonVr;
         public ConfigEntry<bool> autoHide;
-        public ConfigEntry<bool> disableSceneRestrictions;
-        public ConfigEntry<bool> useMaidPolling;
+        public ConfigEntry<bool> autoShowInYotogi;
+        public ConfigEntry<bool> autoShowInAllScenes;
         public ConfigEntry<KeyboardShortcut> showShortcut;
 
         public UndressUtilConfig(ConfigFile conf)
@@ -23,11 +24,17 @@ namespace COM3D2.UndressUtil.Plugin
                 KeyboardShortcut.Empty,
                 "Keyboard shortcut to use to show the undressing window");
 
+            autoShowInVr = conf.Bind(
+                "General",
+                "Auto show in VR",
+                true,
+                "Automatically show undress window when in VR mode");
+
             autoShowInNonVr = conf.Bind(
                 "General",
                 "Auto show outside VR",
-                true,
-                "Automatically show undress window when in non VR mode. Window is always shown when in VR mode.");
+                false,
+                "Automatically show undress window when in non VR mode.");
 
             autoHide = conf.Bind(
                 "General",
@@ -35,17 +42,17 @@ namespace COM3D2.UndressUtil.Plugin
                 true,
                 "Automatically hide window when no maids are active.");
 
-            disableSceneRestrictions = conf.Bind(
+            autoShowInYotogi = conf.Bind(
                 "General",
-                "Disable scene restrictions",
+                "Auto show in yotogi",
                 false,
-                "Allow using undress window regardless of scene type");
+                "Automatically show undress window in yotogi scenes.");
 
-            useMaidPolling = conf.Bind(
+            autoShowInAllScenes = conf.Bind(
                 "General",
-                "Use maid polling",
-                true,
-                "Rely on polling the scene for maids instead of hooks. Enable if the maid list is not getting updated properly.");
+                "Auto show in all scenes",
+                false,
+                "Automatically show in all scenes.");
 
             verboseLog = conf.Bind(
                 "General",

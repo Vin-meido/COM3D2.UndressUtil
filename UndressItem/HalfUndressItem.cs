@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
+using COM3D2.UndressUtil.Plugin.Hooks;
+
 namespace COM3D2.UndressUtil.Plugin.UndressItem
 {
 	class HalfUndressItem : IUndressItem
@@ -51,8 +53,12 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 		{
 			var filename = this.props[idx];
 			Log.LogVerbose("Setting prop [{0}] for mpn [{1}]", filename, this.partsData.mpn);
-			maid.SetProp(this.partsData.mpn, filename, filename.ToLower().GetHashCode(), true);
-			maid.AllProcPropSeqStart();
+
+			MaidHooks.Supress(() =>
+			{
+				maid.SetProp(this.partsData.mpn, filename, filename.ToLower().GetHashCode(), true);
+				maid.AllProcProp();
+			});
 		}
 
 

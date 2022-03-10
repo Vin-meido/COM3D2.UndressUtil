@@ -29,11 +29,13 @@ namespace COM3D2.UndressUtil.Plugin
 
         public static UndressWindowManager Instance { get; private set; }
 
-        private bool IsAutoShow => UndressUtilPlugin.Instance.Config.autoShowInNonVr.Value || GameMain.Instance.VRMode;
+        private UndressUtilPlugin Plugin => UndressUtilPlugin.Instance;
 
-        private bool IsAutoHide => UndressUtilPlugin.Instance.Config.autoHide.Value;
+        private bool IsAutoShow => Plugin.IsAutoShow;
 
-        private bool IsInSupportedLevel => UndressUtilPlugin.Instance.IsInSupportedLevel;
+        private bool IsAutoHide => Plugin.IsAutoHide;
+
+        private bool IsInSupportedLevel => Plugin.IsInSupportedLevel;
 
         public enum UndressMode
         {
@@ -41,6 +43,7 @@ namespace COM3D2.UndressUtil.Plugin
             HALFUNDRESS
         }
 
+        #region Unity
         public void Awake()
         {
             if (Instance != null)
@@ -92,11 +95,14 @@ namespace COM3D2.UndressUtil.Plugin
             this.maidTracker.MaidPropUpdated.AddListener(this.MaidPropUpdate);
 
             SceneManager.sceneLoaded += this.OnSceneLoaded;
-            SceneManager.sceneUnloaded += this.OnSceneUnloaded;
         }
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            StopAllCoroutines();
+            this.DoHideWindow(true);
+            ResetItemManagers();
+
             StartCoroutine(this.KeyboardCheckCoroutine());
 
             if (IsAutoShow && IsInSupportedLevel && !visible)
@@ -105,17 +111,9 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
-        void OnSceneUnloaded(Scene scene)
-        {
-            StopAllCoroutines();
-            this.DoHideWindow(true);
-            ResetItemManagers();
-        }
+        #endregion
 
-        public void RepositionItemGrid()
-        {
-            this.itemGrid.GetComponent<UIGrid>().Reposition();
-        }
+        #region Component setup
 
         private void SetupComponents()
         {
@@ -176,7 +174,15 @@ namespace COM3D2.UndressUtil.Plugin
             MaidSelectPanelManager.MaidSelected.AddListener(this.MaidSelected);
         }
 
+        #endregion
+
+        public void RepositionItemGrid()
+        {
+            this.itemGrid.GetComponent<UIGrid>().Reposition();
+        }
+
         public void HideWindow()
+
         {
             this.DoHideWindow(false);
         }
@@ -297,6 +303,8 @@ namespace COM3D2.UndressUtil.Plugin
             RepositionItemGrid();
         }
 
+        #region Event callbacks
+
         private void MaidActive(Maid maid)
         {
             if (this.IsAutoShow && this.IsInSupportedLevel && !this.visible)
@@ -362,5 +370,7 @@ namespace COM3D2.UndressUtil.Plugin
             this.Refresh();
             maidPropUpdateCoroutineStarted = false;
         }
+
+        #endregion
     }
 }

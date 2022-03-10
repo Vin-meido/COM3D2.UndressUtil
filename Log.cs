@@ -39,6 +39,11 @@ namespace COM3D2.UndressUtil.Plugin
             Logger.LogError(string.Format(message, args));
         }
 
+        internal static void LogError(Exception e)
+        {
+            Logger.LogError(e);
+        }
+
         internal static void LogVerbose(string message, params object[] args)
         {
             if (!enableVerbose) return;

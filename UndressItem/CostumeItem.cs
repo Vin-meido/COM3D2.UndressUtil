@@ -6,6 +6,8 @@ using UnityEngine;
 
 using MaidExtension;
 
+using COM3D2.UndressUtil.Plugin.Hooks;
+
 namespace COM3D2.UndressUtil.Plugin.UndressItem
 {
     class CostumeItem : IUndressItem
@@ -26,12 +28,16 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
         public void Dress()
         {
+            if (!Available) return;
+
             currentCostume = -1;
             UpdateCostume();
         }
 
         public void Toggle()
         {
+            if (!Available) return;
+
             currentCostume += 1;
             if (currentCostume >= costumes.Count())
             {
@@ -43,11 +49,18 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
         public void Undress()
         {
+            if (!Available) return;
+
             currentCostume = costumes.Count() - 1;
             UpdateCostume();
         }
 
         void UpdateCostume()
+        {
+            MaidHooks.Supress(UpdateCostumeProc);
+        }
+
+        void UpdateCostumeProc()
         {
             if (currentCostume == -1)
             {
@@ -60,6 +73,7 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
                 maid.ItemChangeTemp(partsData.mpn.ToString(), newCostume);
                 Log.LogVerbose("Costume change {0} => {1}", partsData.mpn, newCostume);
             }
+
             maid.AllProcProp();
         }
 
@@ -73,45 +87,42 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
         public static IUndressItem ForMaid(Maid maid, PartsData part)
         {
-            var costumes = new List<string>();
-
-            foreach(var t in GetEnumValues<MaidCostumeChangeController.MaidCostumeChangeManager.CostumeType>())
-            {
-                string names = MaidCostumeChangeController.MaidCostumeChangeManager.GetItemChangeNames(t);
-                if (maid.IsItemChangeEnabled(part.mpn.ToString(), names))
-                {
-                    Log.LogVerbose("Costume item {0} {1} [{2}]", maid, part.mpn, names);
-                    costumes.Add(names);
-                }
-            }
-
-            if (costumes.Count() > 0)
-            {
-                return new CostumeItem()
-                {
-                    maid = maid,
-                    partsData = part,
-                    costumes = costumes,
-                    Icon = null,
-                    Active = false,
-                    Available = true,
-                };
-
-            }
-
-            return new CostumeItem()
+            var item = new CostumeItem()
             {
                 maid = maid,
                 partsData = part,
                 Active = false,
                 Available = false,
             };
+
+            item.Update();
+            return item;
         }
 
         public void Update()
         {
-            // costumes shouldnt change, for the most part i think?
-            return;
+            var costumes = new List<string>();
+
+            foreach (var t in GetEnumValues<MaidCostumeChangeController.MaidCostumeChangeManager.CostumeType>())
+            {
+                string names = MaidCostumeChangeController.MaidCostumeChangeManager.GetItemChangeNames(t);
+                if (maid.IsItemChangeEnabled(partsData.mpn.ToString(), names))
+                {
+                    Log.LogVerbose("Costume item {0} {1} [{2}]", maid, partsData.mpn, names);
+                    costumes.Add(names);
+                }
+            }
+
+            if (costumes.Count() > 0)
+            {
+                this.costumes = costumes;
+                this.Available = true;
+            }
+            else
+            {
+                this.costumes = null;
+                this.Available = false;
+            }
         }
     }
 }

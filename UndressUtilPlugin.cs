@@ -113,8 +113,6 @@ namespace COM3D2.UndressUtil.Plugin
             (int)SceneTypeEnum.SceneRecollection,
             (int)SceneTypeEnum.SceneGuestMode,
             (int)SceneTypeEnum.SceneScoutMode,
-            (int)SceneTypeEnum.SceneYotogi,
-            (int)SceneTypeEnum.SceneYotogi_ChuB,
         };
 
         public static UndressUtilPlugin Instance { get; private set; }
@@ -127,15 +125,37 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
-        private bool IsAutoShow
+        public bool IsAutoShow
         {
             get
             {
-                return Config.autoShowInNonVr.Value || GameMain.Instance.VRMode;
+                if (GameMain.Instance.VRMode)
+                {
+                    return Config.autoShowInVr.Value;
+                }
+                else
+                {
+                    return Config.autoShowInNonVr.Value;
+                }
             }
         }
 
-        public bool IsInSupportedLevel => Config.disableSceneRestrictions.Value || EnableScenes.Contains(currentLevel);
+
+        public bool IsAutoHide => Config.autoHide.Value;
+
+        public bool IsInSupportedLevel
+        {
+            get
+            {
+                if (Config.autoShowInAllScenes.Value) return true;
+                if (EnableScenes.Contains(currentLevel)) return true;
+                bool isYotogiLevel = currentLevel == (int)SceneTypeEnum.SceneYotogi || currentLevel == (int)SceneTypeEnum.SceneYotogi_ChuB;
+                if (isYotogiLevel && Config.autoShowInYotogi.Value) return true;
+
+                return false;
+            }
+        }
+
         private int currentLevel;
 
         void Awake()
@@ -148,11 +168,6 @@ namespace COM3D2.UndressUtil.Plugin
             GameObject.DontDestroyOnLoad(this);
             UndressUtilPlugin.Instance = this;
             this.Config = new UndressUtilConfig(base.Config);
-
-            if (!Config.useMaidPolling.Value)
-            {
-                BaseKagManagerHooks.Init();
-            }
 
             SceneManager.sceneLoaded += this.OnSceneLoaded;
             Log.LogInfo("Plugin initialized. Version {0}-{1} ({2})", Version.NUMBER, Version.VARIANT, Version.RELEASE_TYPE);

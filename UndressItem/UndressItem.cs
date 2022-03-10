@@ -6,6 +6,8 @@ using System.Text;
 using UnityEngine;
 using HarmonyLib;
 
+using COM3D2.UndressUtil.Plugin.Hooks;
+
 namespace COM3D2.UndressUtil.Plugin.UndressItem
 {
     class UndressItem : IUndressItem
@@ -90,6 +92,11 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
         protected virtual void SetMaidMask(bool is_mask_on)
         {
+            MaidHooks.Supress(() => SetMaidMaskProc(is_mask_on));
+        }
+
+        protected virtual void SetMaidMaskProc(bool is_mask_on)
+        {
             foreach (TBody.SlotID f_eSlot in this.partsData.SlotIDlist)
             {
                 maid.body0.SetMask(f_eSlot, !is_mask_on);
@@ -112,12 +119,10 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
         {
             MaidProp prop = maid.GetProp(partsData.mpn);
 
-            //var current = string.IsNullOrEmpty(currentProp.strTempFileName) ? currentProp.strFileName : currentProp.strTempFileName;
             var filename = string.IsNullOrEmpty(prop.strTempFileName) ? prop.strFileName : prop.strTempFileName;
 
             if (filename == currentPropFilename)
             {
-                Log.LogVerbose("Item unchanged {0} {1} [{2}]", maid, partsData.mpn, filename);
                 return;
             }
 
@@ -125,7 +130,6 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
             if (string.IsNullOrEmpty(filename) || filename.IndexOf("_del") >= 1)
             {
-                Log.LogVerbose("Skip item {0} {1} [{2}]", maid, partsData.mpn, filename);
                 Active = false;
                 Available = false;
                 Icon = partsData.DefaultIcon;

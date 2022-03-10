@@ -87,8 +87,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assert.cs" />
-    <Compile Include="Hooks\BaseKagManagerHooks.cs" />
     <Compile Include="Hooks\CharacterMgrHooks.cs" />
+    <Compile Include="Hooks\MaidHooks.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="MaidIcon.cs" />
     <Compile Include="UIHelper\Button.cs" />
