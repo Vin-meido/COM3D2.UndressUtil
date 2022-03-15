@@ -122,6 +122,33 @@ namespace COM3D2.UndressUtil.Plugin
 			}
 		}
 
+		public void ReapplyAllMaids(UndressWindowManager.UndressMode mode)
+        {
+			var lookup = maidUndressItemLookup;
+
+			if (mode == UndressWindowManager.UndressMode.HALFUNDRESS)
+			{
+				lookup = maidHalfUndressItemLookup;
+			}
+
+			foreach(var item in lookup.Values)
+            {
+				item.Apply();
+            }
+		}
+
+		public void UpdateMaid(Maid maid, UndressWindowManager.UndressMode mode)
+		{
+			if (mode == UndressWindowManager.UndressMode.NORMAL)
+			{
+				AddMaidUndressData(maid);
+			}
+			else
+            {
+				AddMaidHalfUndressData(maid);
+            }
+		}
+
 		void AddMaidUndressData(Maid maid)
         {
 			if (!maidUndressItemLookup.ContainsKey(maid))

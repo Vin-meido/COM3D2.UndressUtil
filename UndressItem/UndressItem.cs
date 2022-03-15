@@ -51,25 +51,25 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 
         public void Dress()
         {
-            SetMaidMask(false);
             this.Active = true;
+            Apply();
         }
 
         public void Toggle()
         {
-            if (this.Active)
-            {
-                Undress();
-            } else
-            {
-                Dress();
-            }
+            this.Active = !this.Active;
+            Apply();
         }
 
         public void Undress()
         {
-            SetMaidMask(true);
             this.Active = false;
+            Apply();
+        }
+
+        public void Apply()
+        {
+            SetMaidMask(!this.Active);
         }
 
         public static Texture GetIcon(string filename)
@@ -100,7 +100,7 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
             foreach (TBody.SlotID f_eSlot in this.partsData.SlotIDlist)
             {
                 maid.body0.SetMask(f_eSlot, !is_mask_on);
-                Log.LogVerbose("Set slot mask {0}: {1}", f_eSlot, !is_mask_on);
+                Log.LogVerbose("Set slot mask {2} {0}: {1}", f_eSlot, !is_mask_on, maid);
             }
 
             EnsureCrcChecked();
@@ -109,7 +109,7 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
                 foreach (var mpn in this.partsData.CrcMpnList)
                 {
                     crcSetMaskMethod.Invoke(maid.body0, new object[] { mpn, !is_mask_on });
-                    Log.LogVerbose("Set crc mpn mask {0}: {1}", mpn, !is_mask_on);
+                    Log.LogVerbose("Set crc mpn mask {2} {0}: {1}", mpn, !is_mask_on, maid);
                 }
             }
 
@@ -120,11 +120,6 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
             MaidProp prop = maid.GetProp(partsData.mpn);
 
             var filename = string.IsNullOrEmpty(prop.strTempFileName) ? prop.strFileName : prop.strTempFileName;
-
-            if (filename == currentPropFilename)
-            {
-                return;
-            }
 
             currentPropFilename = filename;
 

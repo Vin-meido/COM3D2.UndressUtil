@@ -14,6 +14,7 @@ namespace COM3D2.UndressUtil.Plugin
         public ConfigEntry<bool> autoHide;
         public ConfigEntry<bool> autoShowInYotogi;
         public ConfigEntry<bool> autoShowInAllScenes;
+        public ConfigEntry<bool> keepYotogiUndressState;
         public ConfigEntry<KeyboardShortcut> showShortcut;
 
         public UndressUtilConfig(ConfigFile conf)
@@ -27,7 +28,7 @@ namespace COM3D2.UndressUtil.Plugin
             autoShowInVr = conf.Bind(
                 "General",
                 "Auto show in VR",
-                true,
+                false,
                 "Automatically show undress window when in VR mode");
 
             autoShowInNonVr = conf.Bind(
@@ -39,7 +40,7 @@ namespace COM3D2.UndressUtil.Plugin
             autoHide = conf.Bind(
                 "General",
                 "Auto hide",
-                true,
+                false,
                 "Automatically hide window when no maids are active.");
 
             autoShowInYotogi = conf.Bind(
@@ -47,6 +48,12 @@ namespace COM3D2.UndressUtil.Plugin
                 "Auto show in yotogi",
                 false,
                 "Automatically show undress window in yotogi scenes.");
+
+            keepYotogiUndressState = conf.Bind(
+                "Scene settings",
+                "Keep yotogi undress state",
+                false,
+                "Keeps undress state in between yotogi skills.");
 
             autoShowInAllScenes = conf.Bind(
                 "Scene settings",

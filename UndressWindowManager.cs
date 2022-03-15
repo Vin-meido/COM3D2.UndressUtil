@@ -1,4 +1,5 @@
-﻿using System;
+﻿using COM3D2.UndressUtil.Plugin.Hooks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,6 +96,12 @@ namespace COM3D2.UndressUtil.Plugin
             this.maidTracker.MaidPropUpdated.AddListener(this.MaidPropUpdate);
 
             SceneManager.sceneLoaded += this.OnSceneLoaded;
+
+            YotogiManagerHooks.Init();
+            FreeModeDressKeeperHooks.Init();
+
+            YotogiManagerHooks.OnPreYotogiStart.AddListener(OnPreYotogiStart);
+            YotogiManagerHooks.OnYotogiStart.AddListener(OnYotogiStart);
         }
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -289,6 +296,31 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
+        private void OnPreYotogiStart()
+        {
+            if (!Plugin.IsKeepYotogiDressState) return;
+
+            Log.LogVerbose("Saving dressing state");
+            foreach (var manager in undressItemManagers)
+            {
+                foreach (var maid in maidTracker.GetActiveMaids())
+                {
+                    manager.UpdateMaid(maid, UndressMode.NORMAL);
+                }
+            }
+        }
+
+        private void OnYotogiStart()
+        {
+            if (!Plugin.IsKeepYotogiDressState) return;
+
+            Log.LogInfo("Restoring dressing state");
+            foreach (var manager in undressItemManagers)
+            {
+                manager.ReapplyAllMaids(UndressMode.NORMAL);
+            }
+        }
+
         private void UpdateItemManagers(Maid maid)
         {
             foreach (var manager in undressItemManagers)
@@ -342,19 +374,18 @@ namespace COM3D2.UndressUtil.Plugin
         {
             if (!visible)
             {
-                Log.LogVerbose("Skipping maid prop update because undress window is hidden");
                 return;
             }
 
             if(maid != MaidSelectPanelManager.SelectedMaid)
             {
-                Log.LogVerbose("Skipping maid prop update because it is not the selected maid");
                 return;
             }
 
             if (!maidPropUpdateTriggered)
             {
                 maidPropUpdateTriggered = true;
+                Log.LogVerbose("Maid prop update trigger for maid {0}", maid);
             }
 
             if (!maidPropUpdateCoroutineStarted) { 
@@ -366,11 +397,13 @@ namespace COM3D2.UndressUtil.Plugin
         private IEnumerator MaidPropUpdateCoroutine()
         {
             Log.LogVerbose("Waiting for maid prop updates to stop");
+
             while (maidPropUpdateTriggered)
             {
                 maidPropUpdateTriggered = false;
                 yield return new WaitForSeconds(1);
             }
+
 
             Log.LogVerbose("Maid prop updates ended, refreshing window.");
             this.Refresh();

@@ -31,7 +31,7 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
             if (!Available) return;
 
             currentCostume = -1;
-            UpdateCostume();
+            Apply();
         }
 
         public void Toggle()
@@ -44,7 +44,7 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
                 currentCostume = -1;
             }
 
-            UpdateCostume();
+            Apply();
         }
 
         public void Undress()
@@ -52,10 +52,10 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
             if (!Available) return;
 
             currentCostume = costumes.Count() - 1;
-            UpdateCostume();
+            Apply();
         }
 
-        void UpdateCostume()
+        public void Apply()
         {
             MaidHooks.Supress(UpdateCostumeProc);
         }

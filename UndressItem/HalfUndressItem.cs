@@ -28,26 +28,26 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 		public void Dress()
         {
 			this.currentPropIndex = 0;
-			SetProp(this.currentPropIndex);
+			Apply();
         }
 
         public void Toggle()
         {
 			this.currentPropIndex++;
-			if (this.currentPropIndex >= this.props.Count())
-			{
-				this.Dress();
-			} else
-            {
-				SetProp(this.currentPropIndex);
-			}
+			if (this.currentPropIndex >= this.props.Count()) this.currentPropIndex = 0;
+			Apply();
 		}
 
         public void Undress()
         {
 			this.currentPropIndex = this.props.Count - 1;
-			SetProp(this.currentPropIndex);
+			Apply();
         }
+
+		public void Apply()
+        {
+			SetProp(this.currentPropIndex);
+		}
 
 		private void SetProp(int idx)
 		{

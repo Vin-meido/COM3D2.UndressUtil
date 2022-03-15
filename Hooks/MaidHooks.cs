@@ -14,7 +14,10 @@ namespace COM3D2.UndressUtil.Plugin.Hooks
 		public static readonly MaidEvent OnMaidPropUpdate = new MaidEvent();
 
 		static Harmony harmony;
-		static bool supress = false;
+		static int supressStack = 0;
+
+		public static bool IsSupressed => supressStack > 0;
+        
 
 		public static void Init()
 		{
@@ -31,7 +34,7 @@ namespace COM3D2.UndressUtil.Plugin.Hooks
 		[HarmonyPostfix]
 		private static void Maid_AllProcProp(Maid __instance)
 		{
-			if (supress) return;
+			if (IsSupressed) return;
 
 #if DEBUG
 			Log.LogVerbose("Detected prop load for {0}", __instance);
@@ -51,7 +54,7 @@ namespace COM3D2.UndressUtil.Plugin.Hooks
 		[HarmonyPostfix]
 		private static void TBody_FixMaskFlag(ref TBody __instance)
 		{
-			if (supress) return;
+			if (IsSupressed) return;
 
 #if (DEBUG)
 			Log.LogVerbose("Detected visibility change for {0}", __instance.maid);
@@ -67,13 +70,27 @@ namespace COM3D2.UndressUtil.Plugin.Hooks
 			}
 		}
 
+		public static void IncreaseSupressStack()
+        {
+			supressStack++;
+        }
+
+		public static void DecreaseSupressTack()
+        {
+			supressStack--;
+			if(supressStack < 0)
+            {
+				supressStack = 0;
+            }
+        }
+
 		public static void Supress(Action action)
         {
 #if DEBUG
 			Log.LogVerbose("Supressing proc events");
 #endif
 
-			supress = true;
+			IncreaseSupressStack();
 			try
             {
 				action();
@@ -84,7 +101,7 @@ namespace COM3D2.UndressUtil.Plugin.Hooks
 				Log.LogVerbose("Action complete, resuming proc events");
 #endif
 
-				supress = false;
+				DecreaseSupressTack();
             }
         }
 	}

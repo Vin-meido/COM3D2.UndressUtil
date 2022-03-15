@@ -16,5 +16,6 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
         void Undress();
         void Toggle();
         void Update();
+        void Apply();
     }
 }

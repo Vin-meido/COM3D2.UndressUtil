@@ -34,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -91,7 +92,9 @@
   <ItemGroup>
     <Compile Include="Assert.cs" />
     <Compile Include="Hooks\CharacterMgrHooks.cs" />
+    <Compile Include="Hooks\FreeModeDressKeeperHooks.cs" />
     <Compile Include="Hooks\MaidHooks.cs" />
+    <Compile Include="Hooks\YotogiManagerHooks.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="MaidIcon.cs" />
     <Compile Include="UIHelper\Button.cs" />

@@ -160,7 +160,7 @@ namespace COM3D2.UndressUtil.Plugin
 
         private void UpdateMaidProp(Maid maid)
         {
-            Log.LogVerbose("Update maid props: {0}", maid);
+            //Log.LogVerbose("Update maid props: {0}", maid);
             MaidPropUpdated.Invoke(maid);
         }
     }

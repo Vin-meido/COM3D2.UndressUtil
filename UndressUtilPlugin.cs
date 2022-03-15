@@ -149,12 +149,21 @@ namespace COM3D2.UndressUtil.Plugin
             {
                 if (Config.autoShowInAllScenes.Value) return true;
                 if (EnableScenes.Contains(currentLevel)) return true;
-                bool isYotogiLevel = currentLevel == (int)SceneTypeEnum.SceneYotogi || currentLevel == (int)SceneTypeEnum.SceneYotogi_ChuB;
-                if (isYotogiLevel && Config.autoShowInYotogi.Value) return true;
+                if (IsInYotogiLevel && Config.autoShowInYotogi.Value) return true;
 
                 return false;
             }
         }
+
+        public bool IsInYotogiLevel
+        {
+            get
+            {
+                return currentLevel == (int)SceneTypeEnum.SceneYotogi || currentLevel == (int)SceneTypeEnum.SceneYotogi_ChuB;
+            }
+        }
+
+        public bool IsKeepYotogiDressState => Config.keepYotogiUndressState.Value;
 
         private int currentLevel;
 
