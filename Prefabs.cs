@@ -36,11 +36,32 @@ namespace COM3D2.UndressUtil.Plugin
             CreateHalfUndressWidget(itemWindowTransform.gameObject);
             CreateRefreshWidget(itemWindowTransform.gameObject);
 
-            // Fix colliders
+
+            // Alternate BG
             var bgTransform = instance.transform.Find("ItemWindow/BG");
             Assert.IsNotNull(bgTransform, "Could not find BG");
-            bgTransform.gameObject.GetComponent<UISprite>().ResizeCollider();
+            var bgSprite = bgTransform.gameObject.GetComponent<UISprite>();
 
+            var bg3Sprite = NGUITools.AddSprite(
+                go: itemWindowTransform.gameObject,
+                atlas: bgSprite.atlas,
+                spriteName: bgSprite.spriteName);
+            
+            bg3Sprite.gameObject.name = "BG3";
+            bg3Sprite.depth = -2;
+
+            bg3Sprite.gameObject.AddComponent<BoxCollider>();
+            bg3Sprite.SetDimensions(bgSprite.width, bgSprite.height);
+            bg3Sprite.ResizeCollider();
+
+            bgSprite.enabled = false;
+            GameObject.Destroy(bgTransform.gameObject.GetComponent<BoxCollider>());
+
+            // Frame
+            var bg2Transform = instance.transform.Find("ItemWindow/BG2");
+            Assert.IsNotNull(bg2Transform, "Could not find BG2");
+
+            // remove takeevent
             var takeEventTransform = instance.transform.Find("TakeEvent");
             Assert.IsNotNull(takeEventTransform, "Could not find take event transform");
             GameObject.Destroy(takeEventTransform.gameObject);

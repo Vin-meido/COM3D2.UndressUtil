@@ -16,6 +16,9 @@ namespace COM3D2.UndressUtil.Plugin
         GameObject itemGrid;
         GameObject maidGrid;
         GameObject halfUndressButton;
+        GameObject bg3;
+        GameObject bg2;
+
         UIEventTrigger eventTrigger;
         bool visible = true;
         public UndressMode mode { get; private set; } = UndressMode.NORMAL;
@@ -57,14 +60,17 @@ namespace COM3D2.UndressUtil.Plugin
 
             Log.LogVerbose("UndressWindowManager.Awake");
 
-            this.itemWindow = this.gameObject.transform.Find("ItemWindow").gameObject;
+            this.itemWindow = this.gameObject.transform.Find("ItemWindow")?.gameObject;
             Assert.IsNotNull(this.itemWindow, "Could not find item window");
 
-            this.itemGrid = this.gameObject.transform.Find("ItemWindow/ItemGrid").gameObject;
+            this.itemGrid = this.gameObject.transform.Find("ItemWindow/ItemGrid")?.gameObject;
             Assert.IsNotNull(this.itemGrid, "Could not find item grid");
 
-            this.maidGrid = this.gameObject.transform.Find("ItemWindow/MaidIcon").gameObject;
+            this.maidGrid = this.gameObject.transform.Find("ItemWindow/MaidIcon")?.gameObject;
             Assert.IsNotNull(this.maidGrid, "Could not find MaidIcon");
+
+            this.bg2 = this.gameObject.transform.Find("ItemWindow/BG2")?.gameObject;
+            Assert.IsNotNull(this.bg2, "Could not find BG2");
 
             this.maidTracker = gameObject.GetComponentInParent<MaidTracker>();
             Assert.IsNotNull(this.maidTracker, "Could not find MaidTracker component");
@@ -84,6 +90,9 @@ namespace COM3D2.UndressUtil.Plugin
         public void Start()
         {
             Log.LogVerbose("UndressWindowManager.Start [{0}]", this.GetInstanceID());
+
+            this.bg3 = this.gameObject.transform.Find("ItemWindow/BG3")?.gameObject;
+            Assert.IsNotNull(this.bg3, "Could not find BG3");
 
             SetupComponents();
             SetupMaidIconList();
@@ -125,11 +134,12 @@ namespace COM3D2.UndressUtil.Plugin
         private void SetupComponents()
         {
             // make window draggable
-            var bg = this.gameObject.transform.Find("ItemWindow/BG").gameObject;
-            var dragger = bg.AddComponent<PhotoWindowDragMove>();
+            var bg3 = this.gameObject.transform.Find("ItemWindow/BG3").gameObject;
+            var dragger = bg3.AddComponent<PhotoWindowDragMove>();
             dragger.WindowTransform = this.gameObject.transform;
 
             // setup button callbacks
+            var bg = this.gameObject.transform.Find("ItemWindow/BG").gameObject;
             SetClickCallback(bg, "TitleBar/End", new EventDelegate.Callback(this.HideWindow));
             SetClickCallback(bg, "AllUndress", new EventDelegate.Callback(this.AllUndress));
             SetClickCallback(bg, "AllDress", new EventDelegate.Callback(this.AllDress));
@@ -296,6 +306,30 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
+        public int Height
+        {
+            get => bg2.GetComponent<UISprite>().height;
+            set
+            {
+                var bg3Sprite = bg3.GetComponent<UISprite>();
+                var bg2Sprite = bg2.GetComponent<UISprite>();
+
+                bg2Sprite.height = value;
+                bg3Sprite.height = value + 20;
+
+                var offset = (800 - value) / 2;
+                bg2Sprite.gameObject.transform.localPosition = new Vector3(0, offset - 10);
+                bg3Sprite.gameObject.transform.localPosition = new Vector3(0, offset);
+                bg3Sprite.ResizeCollider();
+            }
+        }
+
+        public void SetRows(int i)
+        {
+            var newHeight = 80 + (i * 80);
+            this.Height = newHeight;
+        }
+
         private void OnPreYotogiStart()
         {
             if (!Plugin.IsKeepYotogiDressState) return;
@@ -323,12 +357,18 @@ namespace COM3D2.UndressUtil.Plugin
 
         private void UpdateItemManagers(Maid maid)
         {
+            int available = 0;
             foreach (var manager in undressItemManagers)
             {
                 manager.SetMaid(maid, mode);
+                var item = manager.GetUndressItem();
+                if (item != null && item.Available) available++;
             }
 
             RepositionItemGrid();
+            var rows = Mathf.CeilToInt(available / 3f);
+            rows = rows > 2 ? rows : 2;
+            SetRows(rows);
         }
 
         private void ResetItemManagers()
