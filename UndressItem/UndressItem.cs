@@ -103,6 +103,11 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
                 Log.LogVerbose("Set slot mask {2} {0}: {1}", f_eSlot, !is_mask_on, maid);
             }
 
+
+            return;
+
+            // something's wrong with this code, not sure what yet
+            // leaving this here for future reference
             EnsureCrcChecked();
             if (crcSetMaskMethod != null)
             {
