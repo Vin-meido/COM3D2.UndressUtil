@@ -66,8 +66,10 @@ By default, if Auto show is enabled for the particular mode (VR or non-VR), the 
 
 This plugin is released under the MIT license, provided as is (see [LICENSE](LICENSE))
 
+```
 *This MOD is outside the scope of KISS's customer support.
 *KISS will take no responsibility for any problems incurred while using this MOD.
 *Users who have purchased "Custom Maid 3D2" or "Custom Order Maid 3D2" can use this MOD.
 *This MOD is prohibited to be used for any purpose other than being displayed in "Custom Maid 3D2" or "Custom Order Maid 3D2."
 *Priority is given to https://com3d2.world/r18/modrul.html.
+```
