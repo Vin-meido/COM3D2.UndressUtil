@@ -49,6 +49,8 @@ These settings can be changed via Configuration Manager (comes with COM Modular 
 
 - Shortcut: shortcut key to use to show the undress window manually (unset by default)
 
+- Keep yotogi undress state: When in yotogi, keep undress state when switching to a new position / skill. Both for normal yotogi and free/recollection mode.
+
 - Verbose log: enable verbose logging in BepInEx console. Enable only when you want to report a problem.
 
 **Scene settings**
