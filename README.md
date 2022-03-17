@@ -64,7 +64,7 @@ By default, if Auto show is enabled for the particular mode (VR or non-VR), the 
 
 ## Notices
 
-This plugin is released under the MIT license, provided as is (see [LICENSE](LICENSE))
+This plugin is released under the MIT license, provided as is without any warranties (see [LICENSE](LICENSE)). Additionally:
 
 ```
 *This MOD is outside the scope of KISS's customer support.
