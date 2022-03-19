@@ -24,7 +24,8 @@ namespace COM3D2.UndressUtil.Plugin
     }
 
     [BepInPlugin("org.bepinex.plugins.com3d2.undressutil", "UndressUtil", Version.NUMBER)]
-    [BepInDependency("deathweasel.com3d2.api")]
+    [BepInDependency("deathweasel.com3d2.api", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("org.bepinex.plugins.unityinjectorloader", BepInDependency.DependencyFlags.SoftDependency)]
     public class UndressUtilPlugin: BaseUnityPlugin
     {
         private enum SceneTypeEnum
