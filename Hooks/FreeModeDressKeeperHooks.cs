@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,36 @@ namespace COM3D2.UndressUtil.Plugin.Hooks
                 Log.LogVerbose("FreeModeDressKeeperHooks loaded");
                 HookUnityInjectorLoader();
             }
+        }
+
+
+        static Assembly AssemblyByName(string name)
+        {
+            return AccessTools.AllAssemblies().FirstOrDefault(assembly => assembly.GetName().Name == name);
+        }
+
+        static Type TypeFromAssembly(string assemblyName, string typeName)
+        {
+            var assembly = AssemblyByName(assemblyName);
+            if (assembly is null)
+            {
+                Log.LogVerbose("Assembly [{0}] not found.", assemblyName);
+                return null;
+            }
+            Type type;
+            type = AccessTools.GetTypesFromAssembly(assembly).FirstOrDefault(t => t.FullName == typeName);
+            
+            if(type is null)
+            {
+                Log.LogVerbose("Type [{0}] not found in assembly [{1}]", typeName, assemblyName);
+            }
+
+            return type;
+        }
+
+        static Type GetUnityInjectorLoaderType()
+        {
+            return TypeFromAssembly("BepInEx.UnityInjectorLoader", "BepInEx.UnityInjectorLoader.UnityInjectorLoader");
         }
 
         public static void HookUnityInjectorLoader()

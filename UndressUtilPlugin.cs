@@ -12,7 +12,7 @@ namespace COM3D2.UndressUtil.Plugin
 {
     public static class Version
     {
-        public const string NUMBER = "1.3.0.1";
+        public const string NUMBER = "1.3.0.2";
 
 #if DEBUG
         public const string RELEASE_TYPE = "debug";
