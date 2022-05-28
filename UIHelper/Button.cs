@@ -68,7 +68,7 @@ namespace COM3D2.UndressUtil.Plugin.UIHelper
             uiButton = gameObject.AddComponent<UIButton>();
 
             uiLabel = NGUITools.AddWidget<UILabel>(gameObject);
-            uiLabel.trueTypeFont = UIUtils.GetFont("NotoSansCJKjp-DemiLight");
+            uiLabel.trueTypeFont = UIUtils.GetNotoSansCJKjpDemiLightFont();
             uiLabel.color = Color.black;
             uiLabel.text = "label";
         }
@@ -115,8 +115,8 @@ namespace COM3D2.UndressUtil.Plugin.UIHelper
 
         public void Init()
         {
-            AtlasCommon = UIUtils.GetAtlas("AtlasCommon");
-            DefaultFont = UIUtils.GetFont("NotoSansCJKjp - DemiLight");
+            AtlasCommon = UIUtils.GetAtlasCommon();
+            DefaultFont = UIUtils.GetNotoSansCJKjpDemiLightFont();
             panel = gameObject.AddComponent<UIPanel>();
             panel.clipping = UIDrawCall.Clipping.ConstrainButDontClip;
         }

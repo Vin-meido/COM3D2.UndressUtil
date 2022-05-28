@@ -15,7 +15,6 @@ namespace COM3D2.UndressUtil.Plugin
             var prefab = ob.transform.Find("DanceUndress").gameObject;
 
             var instance = UnityEngine.Object.Instantiate<GameObject>(prefab, parent.transform, false);
-            //GameObject.Destroy(ob);
 
             // Remove default handlers
             GameObject.Destroy(instance.GetComponent<UndressDance_Mgr>());
@@ -78,7 +77,7 @@ namespace COM3D2.UndressUtil.Plugin
 
         public static GameObject CreateHalfUndressWidget(GameObject parent)
         {
-            var obj = UIUtils.GetAtlas("AtlasCommon");
+            var obj = UIUtils.GetAtlasCommon();
             Assert.IsNotNull(obj, "Cannot find AtlasCommon");
             var atlas = obj.GetComponent<UIAtlas>();
 
@@ -94,7 +93,7 @@ namespace COM3D2.UndressUtil.Plugin
 
         public static GameObject CreateRefreshWidget(GameObject parent)
         {
-            var obj = UIUtils.GetAtlas("AtlasCommon");
+            var obj = UIUtils.GetAtlasCommon();
             Assert.IsNotNull(obj, "Cannot find AtlasCommon");
             var atlas = obj.GetComponent<UIAtlas>();
 

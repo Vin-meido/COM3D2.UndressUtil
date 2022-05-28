@@ -8,42 +8,22 @@ namespace COM3D2.UndressUtil.Plugin.UIHelper
 {
     static class UIUtils
     {
-        static readonly Dictionary<string, UIAtlas> atlasCache = new Dictionary<string, UIAtlas>();
+        static UIAtlas atlasCommon;
 
-        public static UIAtlas GetAtlas(string name)
+        public static UIAtlas GetAtlasCommon()
         {
-            if(atlasCache.ContainsKey(name))
+            if (atlasCommon == null)
             {
-                return atlasCache[name];
+                var prefab = Resources.Load<UIAtlas>("CommonUI/Atlas/AtlasCommon");
+                atlasCommon = GameObject.Instantiate(prefab);
+                GameObject.DontDestroyOnLoad(atlasCommon);
             }
-
-            var obj = Resources.FindObjectsOfTypeAll<UIAtlas>()
-                .Where(o => o.name == name)
-                .FirstOrDefault();
-
-            if (obj != null)
-            {
-                var cachedObj = GameObject.Instantiate(obj);
-                GameObject.DontDestroyOnLoad(cachedObj);
-                atlasCache[name] = cachedObj;
-                return cachedObj;
-            }
-
-            return null;
+            return atlasCommon;
         }
 
-        public static Font GetFont(string name)
+        public static Font GetNotoSansCJKjpDemiLightFont()
         {
-            return Resources.FindObjectsOfTypeAll<Font>()
-                .Where(o => o.name == name)
-                .FirstOrDefault();
-        }
-
-        public static AnimationClip GetAnimationClip(string name)
-        {
-            return Resources.FindObjectsOfTypeAll<AnimationClip>()
-                .Where(o => o.name == name)
-                .FirstOrDefault();
+            return Resources.Load<Font>("font/notosanscjkjp-hinted/notosanscjkjp-demilight");
         }
     }
 }
