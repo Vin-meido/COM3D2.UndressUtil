@@ -12,7 +12,7 @@ namespace COM3D2.UndressUtil.Plugin
 {
     public static class Version
     {
-        public const string NUMBER = "1.3.0.3";
+        public const string NUMBER = "1.3.0.4";
 
 #if DEBUG
         public const string RELEASE_TYPE = "debug";
@@ -178,9 +178,6 @@ namespace COM3D2.UndressUtil.Plugin
             GameObject.DontDestroyOnLoad(this);
             UndressUtilPlugin.Instance = this;
             this.Config = new UndressUtilConfig(base.Config);
-
-            SceneManager.sceneLoaded += this.OnSceneLoaded;
-            Log.LogInfo("Plugin initialized. Version {0}-{1} ({2})", Version.NUMBER, Version.VARIANT, Version.RELEASE_TYPE);
         }
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -190,6 +187,12 @@ namespace COM3D2.UndressUtil.Plugin
 
         void Start()
         {
+            if (!this.Config.enable.Value)
+            {
+                Log.LogWarning("Plugin is disabled in settings, skipping loading. If you wish to use the plugin, enable it in F1 settings and restart your game.");
+                return;
+            }
+
             GameObject uiroot = GameObject.Find("SystemUI Root");
             Assert.IsNotNull(uiroot, "Could not find SystemUI Root");
             var obj = Prefabs.CreateUndressWindow(uiroot);
@@ -200,6 +203,9 @@ namespace COM3D2.UndressUtil.Plugin
                 manager.ToggleWindow,
                 "Undress utility",
                 GetIcon());
+
+            SceneManager.sceneLoaded += this.OnSceneLoaded;
+            Log.LogInfo("Plugin initialized. Version {0}-{1} ({2})", Version.NUMBER, Version.VARIANT, Version.RELEASE_TYPE);
         }
 
         byte[] GetIcon()
