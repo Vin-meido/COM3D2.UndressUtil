@@ -12,7 +12,7 @@ namespace COM3D2.UndressUtil.Plugin
 {
     public static class Version
     {
-        public const string NUMBER = "1.3.0.4";
+        public const string NUMBER = "1.3.0.5";
 
 #if DEBUG
         public const string RELEASE_TYPE = "debug";
@@ -187,12 +187,6 @@ namespace COM3D2.UndressUtil.Plugin
 
         void Start()
         {
-            if (!this.Config.enable.Value)
-            {
-                Log.LogWarning("Plugin is disabled in settings, skipping loading. If you wish to use the plugin, enable it in F1 settings and restart your game.");
-                return;
-            }
-
             GameObject uiroot = GameObject.Find("SystemUI Root");
             Assert.IsNotNull(uiroot, "Could not find SystemUI Root");
             var obj = Prefabs.CreateUndressWindow(uiroot);
