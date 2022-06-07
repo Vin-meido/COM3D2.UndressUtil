@@ -35,8 +35,7 @@ namespace COM3D2.UndressUtil.Plugin.UIHelper
         {
             var undressWindow = NewGameObject(root, "UndressWindow", typeof(UIPanel));
             undressWindow.GetComponent<UIPanel>().depth = NGUITools.CalculateNextDepth(root);
-
-            UnityEngine.Debug.Log($"Created gameobject {undressWindow}");
+            undressWindow.transform.localPosition = new Vector3(777f, 24f);
 
             var itemWindow = NewGameObject(undressWindow, "ItemWindow");
 
