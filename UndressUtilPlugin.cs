@@ -25,7 +25,6 @@ namespace COM3D2.UndressUtil.Plugin
 
     [BepInPlugin("org.bepinex.plugins.com3d2.undressutil", "UndressUtil", Version.NUMBER)]
     [BepInDependency("deathweasel.com3d2.api", BepInDependency.DependencyFlags.HardDependency)]
-    [BepInDependency("org.bepinex.plugins.unityinjectorloader", BepInDependency.DependencyFlags.SoftDependency)]
     public class UndressUtilPlugin: BaseUnityPlugin
     {
         private enum SceneTypeEnum
@@ -118,6 +117,10 @@ namespace COM3D2.UndressUtil.Plugin
 
         public static UndressUtilPlugin Instance { get; private set; }
 
+        public static UndressWindowManager Manager { get; private set; }
+
+        public static bool IsOnOrPastTitleScreen { get; private set; } = false;
+
         public new UndressUtilConfig Config { get; private set; }
 
         internal new ManualLogSource Logger { get
@@ -164,6 +167,8 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
+        public bool IsInTitleLevel => currentLevel == (int)SceneTypeEnum.SceneTitle;
+
         public bool IsKeepYotogiDressState => Config.keepYotogiUndressState.Value;
 
         private int currentLevel;
@@ -178,28 +183,38 @@ namespace COM3D2.UndressUtil.Plugin
             GameObject.DontDestroyOnLoad(this);
             UndressUtilPlugin.Instance = this;
             this.Config = new UndressUtilConfig(base.Config);
+            Log.LogInfo("Load complete!");
         }
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             currentLevel = scene.buildIndex;
+            if (IsInTitleLevel)
+            {
+                IsOnOrPastTitleScreen = true;
+            }
+
+            StopCoroutine(nameof(AutoShowStartCoroutine));
+            if (IsAutoShow && IsOnOrPastTitleScreen && IsInSupportedLevel)
+            {
+                StartCoroutine(nameof(AutoShowStartCoroutine));
+            }
         }
 
         void Start()
         {
-            GameObject uiroot = GameObject.Find("SystemUI Root");
-            Assert.IsNotNull(uiroot, "Could not find SystemUI Root");
-            var obj = Prefabs.CreateUndressWindow(uiroot);
-            var manager = obj.GetComponent<UndressWindowManager>();
+            Log.LogInfo("Startup...");
 
             SystemShortcutAPI.AddButton(
                 "Undress utility", 
-                manager.ToggleWindow,
+                SystemShortcutCallback,
                 "Undress utility",
                 GetIcon());
 
             SceneManager.sceneLoaded += this.OnSceneLoaded;
-            Log.LogInfo("Plugin initialized. Version {0}-{1} ({2})", Version.NUMBER, Version.VARIANT, Version.RELEASE_TYPE);
+            StartCoroutine(KeyboardCheckCoroutine());
+
+            Log.LogInfo("Startup complete. Version {0}-{1} ({2})", Version.NUMBER, Version.VARIANT, Version.RELEASE_TYPE);
         }
 
         byte[] GetIcon()
@@ -213,6 +228,58 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
+        private UndressWindowManager EnsureManagerInitialized()
+        {
+            if(Manager == null)
+            {
+                Log.LogInfo("Initializing UndressWindowManager...");
+                GameObject uiroot = GameObject.Find("SystemUI Root");
+                Assert.IsNotNull(uiroot, "Could not find SystemUI Root");
+                var obj = Prefabs.CreateUndressWindow(uiroot);
+                Manager = obj.GetComponent<UndressWindowManager>();
+                Log.LogInfo("UndressWindowManager initialization complete!");
+            }
 
+            return Manager;
+        }
+
+        private void SystemShortcutCallback()
+        {
+            StartCoroutine(SystemShortcutCallbackCoroutine());
+        }
+
+        private IEnumerator SystemShortcutCallbackCoroutine()
+        {
+            var manager = EnsureManagerInitialized();
+            yield return null;
+            manager.ToggleWindow();
+        }
+
+        private IEnumerator KeyboardCheckCoroutine()
+        {
+            while (true)
+            {
+                yield return null;
+
+                var shortcut = UndressUtilPlugin.Instance.Config.showShortcut.Value;
+                if (shortcut.IsDown())
+                {
+                    EnsureManagerInitialized();
+                    yield return null;
+                    Log.LogInfo("Toggling undress window window...");
+                    Manager.ToggleWindow();
+                }
+            }
+        }
+
+        private IEnumerator AutoShowStartCoroutine()
+        {
+            yield return new WaitForSeconds(1);
+            Log.LogInfo("AutoShow start");
+            var manager = EnsureManagerInitialized();
+            yield return null;
+            manager.DelayedShowWindow();
+            Log.LogInfo("Delayed show queued 1s");
+        }
     }
 }

@@ -73,7 +73,7 @@ namespace COM3D2.UndressUtil.Plugin
 
         public void Start()
         {
-            Log.LogVerbose("UndressWindowManager.Start [{0}]", this.GetInstanceID());
+            Log.LogInfo("[{0}] Startup", this.GetInstanceID());
 
             this.bg3 = this.gameObject.transform.Find("ItemWindow/BG3")?.gameObject;
             Assert.IsNotNull(this.bg3, "Could not find BG3");
@@ -94,20 +94,16 @@ namespace COM3D2.UndressUtil.Plugin
 
             YotogiManagerHooks.OnPreYotogiStart.AddListener(OnPreYotogiStart);
             YotogiManagerHooks.OnYotogiStart.AddListener(OnYotogiStart);
+            Log.LogInfo("[{0}] Startup complete!", this.GetInstanceID());
         }
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            Log.LogInfo("Reinitializing due to scene load...");
             StopAllCoroutines();
             this.DoHideWindow(true);
             ResetItemManagers();
-
-            StartCoroutine(this.KeyboardCheckCoroutine());
-
-            if (IsAutoShow && IsInSupportedLevel && !visible)
-            {
-                DelayedShowWindow();
-            }
+            Log.LogInfo("Reinitialization complete.");
         }
 
         #endregion
@@ -209,11 +205,9 @@ namespace COM3D2.UndressUtil.Plugin
 
         IEnumerator DelayedShowWindowCoroutine()
         {
-            Log.LogVerbose("Delayed show wait");
             yield return new WaitForSeconds(1);
             if (!visible && this.maidTracker.GetActiveMaids().Count() > 0)
             {
-                Log.LogVerbose("Delayed show start");
                 this.ShowWindow();
             }
         }
@@ -271,20 +265,6 @@ namespace COM3D2.UndressUtil.Plugin
         public void Refresh()
         {
             UpdateItemManagers(MaidSelectPanelManager.SelectedMaid);
-        }
-
-        private IEnumerator KeyboardCheckCoroutine()
-        {
-            var shortcut = UndressUtilPlugin.Instance.Config.showShortcut.Value;
-            while (true)
-            {
-                yield return null;
-
-                if (shortcut.IsDown())
-                {
-                    ToggleWindow();
-                }
-            }
         }
 
         public int Height
