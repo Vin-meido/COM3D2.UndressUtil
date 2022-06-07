@@ -11,14 +11,7 @@ namespace COM3D2.UndressUtil.Plugin
     {
         public static GameObject CreateUndressWindow(GameObject parent)
         {
-            var ob = Resources.Load<GameObject>("SceneDance/Rhythm_Action/Prefab/RhythmAction_Mgr");
-            var prefab = ob.transform.Find("DanceUndress").gameObject;
-
-            var instance = UnityEngine.Object.Instantiate<GameObject>(prefab, parent.transform, false);
-
-            // Remove default handlers
-            GameObject.Destroy(instance.GetComponent<UndressDance_Mgr>());
-            GameObject.Destroy(instance.GetComponentInChildren<UIWFTabPanel>());
+            var instance = UndressWindowBuilder.Build(parent);
 
             // Setup maid status tracking
             instance.AddComponent<MaidTracker>();
@@ -35,42 +28,6 @@ namespace COM3D2.UndressUtil.Plugin
             CreateHalfUndressWidget(itemWindowTransform.gameObject);
             CreateRefreshWidget(itemWindowTransform.gameObject);
 
-
-            // Alternate BG
-            var bgTransform = instance.transform.Find("ItemWindow/BG");
-            Assert.IsNotNull(bgTransform, "Could not find BG");
-            var bgSprite = bgTransform.gameObject.GetComponent<UISprite>();
-
-            var bg3Sprite = NGUITools.AddSprite(
-                go: itemWindowTransform.gameObject,
-                atlas: bgSprite.atlas,
-                spriteName: bgSprite.spriteName);
-            
-            bg3Sprite.gameObject.name = "BG3";
-            bg3Sprite.depth = -2;
-
-            bg3Sprite.gameObject.AddComponent<BoxCollider>();
-            bg3Sprite.SetDimensions(bgSprite.width, bgSprite.height);
-            bg3Sprite.ResizeCollider();
-
-            bgSprite.enabled = false;
-            GameObject.Destroy(bgTransform.gameObject.GetComponent<BoxCollider>());
-
-            // Frame
-            var bg2Transform = instance.transform.Find("ItemWindow/BG2");
-            Assert.IsNotNull(bg2Transform, "Could not find BG2");
-
-            // remove takeevent
-            var takeEventTransform = instance.transform.Find("TakeEvent");
-            Assert.IsNotNull(takeEventTransform, "Could not find take event transform");
-            GameObject.Destroy(takeEventTransform.gameObject);
-
-            // Relayout maid icons
-            var maidIconTransform = instance.transform.Find("ItemWindow/MaidIcon");
-            maidIconTransform.localPosition = new Vector3(-170, 200);
-            var maidUiGrid = maidIconTransform.gameObject.GetComponent<UIGrid>();
-            maidUiGrid.arrangement = UIGrid.Arrangement.Vertical;
-            maidUiGrid.pivot = UIWidget.Pivot.TopLeft;
 
             return instance;
         }
@@ -108,22 +65,17 @@ namespace COM3D2.UndressUtil.Plugin
 
         public static GameObject CreateMaidIcon(GameObject parent)
         {
-            var instance = wf.Utility.CreatePrefab(parent, "SceneDance/Rhythm_Action/Prefab/UndressDance/MaidIcon", true);
+            var instance = MaidIconBuilder.Build(parent);
 
             // setup new handler
             instance.AddComponent<MaidIcon>();
-            
-            var icon = instance.transform.Find("IconMask/Icon").gameObject;
-            Assert.IsNotNull(icon, "Could not find IconMask/Icon");
-            GameObject.Destroy(icon.GetComponent<UIWFTabButton>());
 
             return instance;
         }
 
         public static GameObject CreateItemIcon(GameObject parent)
         {
-            GameObject instance = wf.Utility.CreatePrefab(parent, "SceneDance/Rhythm_Action/Prefab/UndressDance/ItemIcon", true);
-            GameObject.Destroy(instance.GetComponent<Dance.UndressItem>());
+            var instance = ItemIconBuilder.Build(parent);
             instance.AddComponent<UndressItemManager>();
             return instance;
         }

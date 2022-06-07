@@ -31,8 +31,6 @@ namespace COM3D2.UndressUtil.Plugin
 
         public readonly UnityEvent UndressModeChangeEvent = new UnityEvent();
 
-        public static UndressWindowManager Instance { get; private set; }
-
         private UndressUtilPlugin Plugin => UndressUtilPlugin.Instance;
 
         private bool IsAutoShow => Plugin.IsAutoShow;
@@ -50,14 +48,6 @@ namespace COM3D2.UndressUtil.Plugin
         #region Unity
         public void Awake()
         {
-            if (Instance != null)
-            {
-                throw new Exception("Already initialized");
-            }
-
-            Instance = this;
-            DontDestroyOnLoad(this);
-
             Log.LogVerbose("UndressWindowManager.Awake");
 
             this.itemWindow = this.gameObject.transform.Find("ItemWindow")?.gameObject;
@@ -75,12 +65,6 @@ namespace COM3D2.UndressUtil.Plugin
             this.maidTracker = gameObject.GetComponentInParent<MaidTracker>();
             Assert.IsNotNull(this.maidTracker, "Could not find MaidTracker component");
 
-            this.eventTrigger = this.gameObject
-                .transform
-                .Find("TakeEvent")
-                .gameObject
-                .GetComponent<UIEventTrigger>();
-            Assert.IsNotNull(this.eventTrigger, "Could not find event trigger");
 
             this.gameObject.AddComponent<TweenAlpha>();
 
@@ -135,8 +119,6 @@ namespace COM3D2.UndressUtil.Plugin
         {
             // make window draggable
             var bg3 = this.gameObject.transform.Find("ItemWindow/BG3").gameObject;
-            var dragger = bg3.AddComponent<PhotoWindowDragMove>();
-            dragger.WindowTransform = this.gameObject.transform;
 
             // setup button callbacks
             var bg = this.gameObject.transform.Find("ItemWindow/BG").gameObject;
