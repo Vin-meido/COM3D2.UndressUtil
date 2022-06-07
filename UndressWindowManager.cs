@@ -91,7 +91,6 @@ namespace COM3D2.UndressUtil.Plugin
             SceneManager.sceneLoaded += this.OnSceneLoaded;
 
             YotogiManagerHooks.Init();
-            FreeModeDressKeeperHooks.Init();
 
             YotogiManagerHooks.OnPreYotogiStart.AddListener(OnPreYotogiStart);
             YotogiManagerHooks.OnYotogiStart.AddListener(OnYotogiStart);

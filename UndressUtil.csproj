@@ -83,7 +83,6 @@
   <ItemGroup>
     <Compile Include="Assert.cs" />
     <Compile Include="Hooks\CharacterMgrHooks.cs" />
-    <Compile Include="Hooks\FreeModeDressKeeperHooks.cs" />
     <Compile Include="Hooks\MaidHooks.cs" />
     <Compile Include="Hooks\YotogiManagerHooks.cs" />
     <Compile Include="Log.cs" />
