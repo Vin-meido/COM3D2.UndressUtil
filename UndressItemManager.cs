@@ -207,5 +207,6 @@ namespace COM3D2.UndressUtil.Plugin
 			}
 		}
 
+		public bool Available => GetUndressItem()?.Available ?? false;
 	}
 }

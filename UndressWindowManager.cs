@@ -19,9 +19,8 @@ namespace COM3D2.UndressUtil.Plugin
         GameObject bg3;
         GameObject bg2;
 
-        UIEventTrigger eventTrigger;
         bool visible = true;
-        public UndressMode mode { get; private set; } = UndressMode.NORMAL;
+        public UndressMode Mode { get; private set; } = UndressMode.NORMAL;
 
         private Dictionary<UIWFTabButton, Maid> uiTabMaidLookup = new Dictionary<UIWFTabButton, Maid>();
         private Dictionary<Maid, GameObject> maidGameObjectLookup = new Dictionary<Maid, GameObject>();
@@ -73,7 +72,7 @@ namespace COM3D2.UndressUtil.Plugin
 
         public void Start()
         {
-            Log.LogInfo("[{0}] Startup", this.GetInstanceID());
+            Log.LogInfo("UndressWindowManager[{0}] Startup", this.GetInstanceID());
 
             this.bg3 = this.gameObject.transform.Find("ItemWindow/BG3")?.gameObject;
             Assert.IsNotNull(this.bg3, "Could not find BG3");
@@ -94,7 +93,7 @@ namespace COM3D2.UndressUtil.Plugin
 
             YotogiManagerHooks.OnPreYotogiStart.AddListener(OnPreYotogiStart);
             YotogiManagerHooks.OnYotogiStart.AddListener(OnYotogiStart);
-            Log.LogInfo("[{0}] Startup complete!", this.GetInstanceID());
+            Log.LogInfo("UndressWindowManager[{0}] Startup complete!", this.GetInstanceID());
         }
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -239,7 +238,10 @@ namespace COM3D2.UndressUtil.Plugin
         {
             foreach (var undressItem in undressItemManagers)
             {
-                undressItem.Undress();
+                if (undressItem.Available)
+                {
+                    undressItem.Undress();
+                }
             }
         }
 
@@ -247,16 +249,19 @@ namespace COM3D2.UndressUtil.Plugin
         {
             foreach (var undressItem in undressItemManagers)
             {
-                undressItem.Dress();
+                if (undressItem.Available)
+                {
+                    undressItem.Dress();
+                }
             }
         }
 
         public void HalfUndressMode()
         {
-            this.mode = this.mode == UndressMode.HALFUNDRESS ? UndressMode.NORMAL : UndressMode.HALFUNDRESS;
+            this.Mode = this.Mode == UndressMode.HALFUNDRESS ? UndressMode.NORMAL : UndressMode.HALFUNDRESS;
 
             var uiBtn = halfUndressButton.GetComponent<UIButton>();
-            uiBtn.defaultColor = this.mode == UndressMode.HALFUNDRESS ? Color.white : Color.gray;
+            uiBtn.defaultColor = this.Mode == UndressMode.HALFUNDRESS ? Color.white : Color.gray;
             uiBtn.UpdateColor(false);
 
             this.Refresh();
@@ -321,7 +326,7 @@ namespace COM3D2.UndressUtil.Plugin
             int available = 0;
             foreach (var manager in undressItemManagers)
             {
-                manager.SetMaid(maid, mode);
+                manager.SetMaid(maid, Mode);
                 var item = manager.GetUndressItem();
                 if (item != null && item.Available) available++;
             }

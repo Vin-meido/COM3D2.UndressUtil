@@ -12,7 +12,7 @@ namespace COM3D2.UndressUtil.Plugin
 {
     public static class Version
     {
-        public const string NUMBER = "1.3.0.5";
+        public const string NUMBER = "1.3.0.6";
 
 #if DEBUG
         public const string RELEASE_TYPE = "debug";
@@ -183,7 +183,7 @@ namespace COM3D2.UndressUtil.Plugin
             GameObject.DontDestroyOnLoad(this);
             UndressUtilPlugin.Instance = this;
             this.Config = new UndressUtilConfig(base.Config);
-            Log.LogInfo("Load complete!");
+            Log.LogInfo("Plugin load complete!");
         }
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -203,7 +203,7 @@ namespace COM3D2.UndressUtil.Plugin
 
         void Start()
         {
-            Log.LogInfo("Startup...");
+            Log.LogInfo("Plugin startup...");
 
             SystemShortcutAPI.AddButton(
                 "Undress utility", 
@@ -214,7 +214,7 @@ namespace COM3D2.UndressUtil.Plugin
             SceneManager.sceneLoaded += this.OnSceneLoaded;
             StartCoroutine(KeyboardCheckCoroutine());
 
-            Log.LogInfo("Startup complete. Version {0}-{1} ({2})", Version.NUMBER, Version.VARIANT, Version.RELEASE_TYPE);
+            Log.LogInfo("Plugin startup complete. Version {0}-{1} ({2})", Version.NUMBER, Version.VARIANT, Version.RELEASE_TYPE);
         }
 
         byte[] GetIcon()
