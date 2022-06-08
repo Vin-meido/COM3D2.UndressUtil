@@ -22,8 +22,6 @@ namespace COM3D2.UndressUtil.Plugin
         bool visible = true;
         public UndressMode Mode { get; private set; } = UndressMode.NORMAL;
 
-        private Dictionary<UIWFTabButton, Maid> uiTabMaidLookup = new Dictionary<UIWFTabButton, Maid>();
-        private Dictionary<Maid, GameObject> maidGameObjectLookup = new Dictionary<Maid, GameObject>();
         public MaidSelectPanelManager MaidSelectPanelManager { get; private set; }
         private MaidTracker maidTracker;
         private readonly List<UndressItemManager> undressItemManagers = new List<UndressItemManager>();
@@ -182,11 +180,7 @@ namespace COM3D2.UndressUtil.Plugin
 
         public void DoHideWindow(bool immediate = false)
         {
-            if (currentDelayedShow != null)
-            {
-                StopCoroutine(currentDelayedShow);
-            }
-
+            StopCoroutine(nameof(DelayedShowWindowCoroutine));
             if (this.visible)
             {
                 var duration = immediate ? 0f : 0.5f;
@@ -195,11 +189,9 @@ namespace COM3D2.UndressUtil.Plugin
             }
         }
 
-        Coroutine currentDelayedShow;
-
         public void DelayedShowWindow()
         {
-            currentDelayedShow = StartCoroutine(DelayedShowWindowCoroutine());
+            StartCoroutine(nameof(DelayedShowWindowCoroutine));
         }
 
         IEnumerator DelayedShowWindowCoroutine()
