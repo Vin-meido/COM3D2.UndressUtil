@@ -8,6 +8,7 @@ namespace COM3D2.UndressUtil.Plugin
 {
     public class UndressUtilConfig
     {
+        public ConfigEntry<bool> enable;
         public ConfigEntry<bool> verboseLog;
         public ConfigEntry<bool> autoShowInVr;
         public ConfigEntry<bool> autoShowInNonVr;
@@ -19,6 +20,12 @@ namespace COM3D2.UndressUtil.Plugin
 
         public UndressUtilConfig(ConfigFile conf)
         {
+            enable = conf.Bind(
+                "Plugin",
+                "Enable",
+                false,
+                "Enable the plugin.");
+
             showShortcut = conf.Bind(
                 "General",
                 "Shortcut",

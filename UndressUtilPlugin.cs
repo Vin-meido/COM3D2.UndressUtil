@@ -183,8 +183,29 @@ namespace COM3D2.UndressUtil.Plugin
             GameObject.DontDestroyOnLoad(this);
             UndressUtilPlugin.Instance = this;
             this.Config = new UndressUtilConfig(base.Config);
+            this.enabled = this.Config.enable.Value;
+
+            this.Config.enable.SettingChanged += (sender, e) =>
+            {
+                this.enabled = this.Config.enable.Value;
+
+                if(this.enabled)
+                {
+                    Log.LogInfo("Plugin enabled.");
+                }
+                else
+                {
+                    Log.LogWarning("Plugin disabled. You must restart the game for settings to take effect");
+                }
+            };
+
             Log.LogInfo("Plugin load complete!");
+            if (!this.enabled)
+            {
+                Log.LogWarning("Plugin is disabled in configuration. Enable in F1 configuration manager to use.");
+            }
         }
+
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
@@ -192,6 +213,11 @@ namespace COM3D2.UndressUtil.Plugin
             if (IsInTitleLevel)
             {
                 IsOnOrPastTitleScreen = true;
+            }
+
+            if (!this.enabled)
+            {
+                return;
             }
 
             StopCoroutine(nameof(AutoShowStartCoroutine));
@@ -245,7 +271,10 @@ namespace COM3D2.UndressUtil.Plugin
 
         private void SystemShortcutCallback()
         {
-            StartCoroutine(SystemShortcutCallbackCoroutine());
+            if (this.enabled)
+            {
+                StartCoroutine(SystemShortcutCallbackCoroutine());
+            }
         }
 
         private IEnumerator SystemShortcutCallbackCoroutine()
