@@ -16,7 +16,7 @@ This plugin works with all versions of COM3D2:
 
 ## Known issues
 
-(EN and JP COM3D2 only) Minor stuttering may occur when switching into Half Undress mode for the first time in a scene. Subsequent switching in and out of the mode should be fine however. This will be further optimized in a later update.
+**There may be some rare crashes that occur**. Most of it is fixed in 1.3.0.6 release, but there may still be some that we are finding it hard to identify. Therefore, the plugin is disabled by default on initial installation. To enable use of the plugin, enable it in the configuration, or via `F1` Configuration Manager if you have it installed (e.g. CMI)
 
 
 ## Requirements
@@ -38,6 +38,10 @@ This plugin requires COM3D2API. If you use CMI, then this plugin should be inclu
 ## Configuration
 
 These settings can be changed via Configuration Manager (comes with COM Modular Installer):
+
+**Plugin**
+
+- enable: Enables the use of the plugin.
 
 **General**
 
