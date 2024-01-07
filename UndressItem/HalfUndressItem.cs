@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 
 using COM3D2.UndressUtil.Plugin.Hooks;
+using System.Text.RegularExpressions;
 
 namespace COM3D2.UndressUtil.Plugin.UndressItem
 {
@@ -77,12 +78,16 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 		public void Update()
         {
 			MaidProp prop = maid.GetProp(partsData.mpn);
-
-			if(currentMainPropFilename == prop.strFileName) { 
+			string propFilename = GetMaidPropBaseNonPororiFilename(prop);
+			
+			if (currentMainPropFilename == propFilename)
+			{
+				// same no need to update.
 				return;
-            }
+			}
 
-			currentMainPropFilename = prop.strFileName;
+			currentMainPropFilename = propFilename;
+			Log.LogVerbose("Half undress item {0} {1}", partsData.mpn, currentMainPropFilename);
 
 			if (string.IsNullOrEmpty(currentMainPropFilename) || currentMainPropFilename.IndexOf("_del") >= 1)
 			{
@@ -103,6 +108,28 @@ namespace COM3D2.UndressUtil.Plugin.UndressItem
 			Icon = UndressItem.GetIcon(currentMainPropFilename);
 			props = halfUndressProps;
 		}
+
+		private static string GetMaidPropBaseNonPororiFilename(MaidProp prop)
+        {
+			string filename = prop.strTempFileName;
+			if (string.IsNullOrEmpty(filename))
+			{
+				filename = prop.strFileName;
+			}
+
+			if (filename.Contains("_porori"))
+            {
+				filename = Regex.Replace(filename, "_porori[0-9]+", "");
+			}
+
+			string[] infixes = { "_zurashi", "_mekure_back", "_mekure", "_po" };
+			foreach(var infix in infixes)
+            {
+				filename = filename.Replace(infix, "");
+            }
+
+			return filename;
+        }
 
 		private static IEnumerable<string> GetPororiFiles(string basename, string ext)
 		{
