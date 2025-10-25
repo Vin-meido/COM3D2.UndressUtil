@@ -1,135 +1,59 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{09C4AFB0-39B9-4BB9-A1D2-53C034157375}</ProjectGuid>
+    <TargetFramework>net3.5</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>COM3D2.UndressUtil.Plugin</RootNamespace>
     <AssemblyName>COM3D2.UndressUtil</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
     <DefineConstants Condition="'$(Configuration)'=='jp-3.0'">CRC_SUPPORT</DefineConstants>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <Configurations>Debug;en_jp-2.0;jp-3.0;Release</Configurations>
+    <!--<PostBuildEvent>cd $(OutDir)
+mkdir BepinEx\Plugins
+copy $(TargetPath) BepinEx\plugins
+tar -cvaf $(TargetName).zip BepinEx
+copy $(TargetPath) F:\COM-3d2\BepinEx\plugins
+copy $(TargetPath) F:\COM3D2JP\COM3D2_5\BepinEx\plugins
+copy $(TargetPath) F:\COM3D2JP\COM3D2\BepinEx\plugins</PostBuildEvent>-->
+    <AssemblyTitle>UndresUtil</AssemblyTitle>
+    <Product>UndresUtil</Product>
+    <Copyright>Copyright ©  2021</Copyright>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE;$(DefineConstants)</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>2</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'en_jp-2.0|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\en\</OutputPath>
     <DefineConstants>DEBUG;TRACE;$(DefineConstants)</DefineConstants>
     <WarningLevel>2</WarningLevel>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'jp-3.0|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\jp\</OutputPath>
     <DefineConstants>DEBUG;TRACE;$(DefineConstants)</DefineConstants>
     <WarningLevel>2</WarningLevel>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony, Version=2.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\HarmonyX.2.7.0\lib\net35\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\COM3D2.GameLibs.2.15.1-r.0\lib\net35\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\COM3D2.GameLibs.2.15.1-r.0\lib\net35\Assembly-CSharp-firstpass.dll</HintPath>
-    </Reference>
-    <Reference Include="BepInEx, Version=5.4.19.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\BepInEx.BaseLib.5.4.19\lib\net35\BepInEx.dll</HintPath>
-    </Reference>
-    <Reference Include="COM3D2.API">
-      <HintPath>libs\COM3D2.API.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\UnityEngine.Modules.5.6.4\lib\net35\UnityEngine.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Assert.cs" />
-    <Compile Include="Hooks\CharacterMgrHooks.cs" />
-    <Compile Include="Hooks\MaidHooks.cs" />
-    <Compile Include="Hooks\YotogiManagerHooks.cs" />
-    <Compile Include="Log.cs" />
-    <Compile Include="MaidIcon.cs" />
-    <Compile Include="UIHelper\Button.cs" />
-    <Compile Include="UIHelper\ItemIconBuilder.cs" />
-    <Compile Include="UIHelper\MaidIconBuilder.cs" />
-    <Compile Include="UIHelper\UIUtils.cs" />
-    <Compile Include="UIHelper\UndressWindowBuilder.cs" />
-    <Compile Include="UndressItem\CostumeItem.cs" />
-    <Compile Include="UndressItem\HalfUndressItem.cs" />
-    <Compile Include="UndressItem\IUndressItem.cs" />
-    <Compile Include="UndressItem\UndressItem.cs" />
-    <Compile Include="UndressUtilConfig.cs" />
-    <Compile Include="MaidSelectPanelManager.cs" />
-    <Compile Include="MaidTracker.cs" />
-    <Compile Include="PartsDB.cs" />
-    <Compile Include="Prefabs.cs" />
-    <Compile Include="UndressItemManager.cs" />
-    <Compile Include="UndressUtilPlugin.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UndressWindowManager.cs" />
-    <!--
-    <Compile Include="F:\COM3D2JP\COM3D2\scripts\undress_window_copy.cs" />
-    -->
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <PackageReference Include="BepInEx.Core" Version="5.4.19">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="COM3D2.GameLibs" Version="2.15.1-r.0">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="UnityEngine" Version="5.6.1">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon.png" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>cd $(OutDir)
-mkdir BepinEx\Plugins
-copy $(TargetPath) BepinEx\plugins
-tar -cvaf $(TargetName).zip BepinEx
-copy $(TargetPath) F:\COM-3d2\BepinEx\plugins
-copy $(TargetPath) F:\COM3D2JP\COM3D2_5\BepinEx\plugins
-copy $(TargetPath) F:\COM3D2JP\COM3D2\BepinEx\plugins</PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="packages\BepInEx.Core.5.4.19\build\BepInEx.Core.targets" Condition="Exists('packages\BepInEx.Core.5.4.19\build\BepInEx.Core.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('packages\BepInEx.Core.5.4.19\build\BepInEx.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\BepInEx.Core.5.4.19\build\BepInEx.Core.targets'))" />
-  </Target>
+  <ItemGroup>
+    <Reference Include="COM3D2.API">
+      <HintPath>libs\COM3D2.API.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
 </Project>
